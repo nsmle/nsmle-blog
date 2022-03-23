@@ -1,0 +1,146 @@
+/**
+ * Gh Dark Theme originally by Fiki Pratama [@nsmle]
+ * https://draculatheme.com/
+ *
+ * Ported for PrismJS by Albert Vallverdu [@byverdu]
+ */
+
+.toastui-editor-dark code[class*="language-"],
+.toastui-editor-dark pre[class*="language-"] {
+	color: #e2e8f0;
+	background: none;
+	/* text-shadow: 0 1px rgba(0, 0, 0, 0.3); */
+	font-family: Menlo, Monaco, Consolas , 'Andale Mono', 'Ubuntu', monospace;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+.toastui-editor-dark pre[class*="language-"] {
+	/* padding: 1em;
+	margin: .5em 0; */
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+.toastui-editor-dark :not(pre) > .toastui-editor-dark code[class*="language-"],
+.toastui-editor-dark pre[class*="language-"] {
+	/* background: #282a36; */
+	background: transparent;
+}
+
+/* Inline code */
+.toastui-editor-dark :not(pre) > .toastui-editor-dark code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.toastui-editor-dark .token.comment,
+.toastui-editor-dark .token.prolog,
+.toastui-editor-dark .token.doctype,
+.toastui-editor-dark .token.cdata {
+    color: #8B949D;
+}
+
+.toastui-editor-dark .token.punctuation {
+	color: #F1F6FC;
+}
+
+.toastui-editor-dark .namespace {
+	opacity: .7;
+}
+
+.toastui-editor-dark .token.selector,
+.toastui-editor-dark .token.tag {
+    color: #51de60;
+}
+
+.toastui-editor-dark .token.property,
+.toastui-editor-dark .token.attr-name {
+    color: #67b0eb;
+}
+
+.toastui-editor-dark .token.attr-value {
+    color: #ACD3F4;
+}
+
+.toastui-editor-dark .token.constant ,
+.toastui-editor-dark .token.deleted {
+	color: #c9d1d9;
+}
+
+.toastui-editor-dark .token.symbol {
+    color: #ACD3F4;
+}
+
+.toastui-editor-dark .token.boolean,
+.toastui-editor-dark .token.number {
+	color: #87BDEB;
+}
+
+.toastui-editor-dark .token.string {
+    color: #A8D5FC;
+}
+
+/* .token.selector, */
+.toastui-editor-dark .token.char,
+.toastui-editor-dark .token.builtin,
+.toastui-editor-dark .token.inserted {
+	color: #c9d1d9;
+}
+
+
+.toastui-editor-dark .token.entity,
+.toastui-editor-dark .token.url,
+.toastui-editor-dark .language-css .token.string,
+.toastui-editor-dark .style .token.string {
+	color: #CAD1D9;
+}
+
+.toastui-editor-dark .language-php .token.variable {
+    color: #e2efff;
+}
+
+.toastui-editor-dark .token.atrule,
+.toastui-editor-dark .token.function {
+	color: #CCADF0;
+}
+
+.toastui-editor-dark .token.class-name {
+    color: #d6ebff;
+}
+
+.toastui-editor-dark .token.operator,
+.toastui-editor-dark .token.keyword {
+	color: #ff665e;
+}
+
+.toastui-editor-dark .token.regex,
+.toastui-editor-dark .token.important {
+	color: #ad5900;
+}
+
+.toastui-editor-dark .token.important,
+.toastui-editor-dark .token.bold {
+	font-weight: bold;
+}
+
+.toastui-editor-dark .token.italic {
+	font-style: italic;
+}
+
+.toastui-editor-dark .token.entity {
+	cursor: help;
+}

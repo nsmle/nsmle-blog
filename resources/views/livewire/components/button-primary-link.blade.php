@@ -1,0 +1,3 @@
+<button wire:click="$emitSelf('click')" type="button" class="mr-2 inline-flex items-center px-3 py-2 shadow-md shadow-grenteel-200 dark:shadow-midnight-400 border border-grenteel-200/10 text-sm leading-4 font-medium rounded-md text-gray-200 dark:text-slate-100 bg-blue-700/80 hover:shadow-grenteel-300 hover:text-white focus:outline-none focus:mt-1 focus:bg-blue-700/60 focus:text-gray-300 focus:ring focus:ring-blue-500/10 focus:shadow-grenteel-200 transition">
+    {{ $text }}
+</button>
