@@ -5,7 +5,7 @@ namespace App\Http\Livewire\Components\Toasts;
 use Livewire\Component;
 use Auth;
 
-class ToastPost extends Component
+class ToastNotify extends Component
 {
     public $toastNotifyPostLiked;
     
@@ -45,7 +45,7 @@ class ToastPost extends Component
     public function render()
     {
         
-        return view('livewire.components.toasts.toast-post', [
+        return view('livewire.components.toasts.toast-notify', [
             'toastNotifyPostLiked' => $this->toastNotifyPostLiked,
             'toastNotifyPostCommented' => $this->toastNotifyPostCommented
         ]);

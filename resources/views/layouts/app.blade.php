@@ -67,7 +67,7 @@
         
         @livewire('livewire-ui-modal')
         
-        @livewire('components.toasts.toast-post')
+        @livewire('components.toasts.toast-notify')
     
     
     
