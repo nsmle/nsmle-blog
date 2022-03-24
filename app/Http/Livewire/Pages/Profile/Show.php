@@ -5,17 +5,15 @@ namespace App\Http\Livewire\Pages\Profile;
 use Livewire\Component;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Post;
-use App\Models\Follower;
 use Auth;
-use Livewire\WithPagination;
+// use Livewire\WithPagination;
 
 //use App\Events\UserStatus;
 use App\Events\NotifyEvent;
 
 class Show extends Component
 {
-    use WithPagination;
+    // use WithPagination;
     
     public $user;
     
@@ -23,11 +21,9 @@ class Show extends Component
     
     public $usernameUser;
     
-    public $follow, $alert;
-    
     public $showPostPublishedOnly = true;
     
-    public $perPage = 10;
+    public $perPage = 1;
     
     public function getListeners()
     {
@@ -38,10 +34,18 @@ class Show extends Component
         ];
     }
     
-    public function userStatus($data)
+    public function getFollowers()
     {
+        $this->emit(
+            "openModal",
+            "components.modals.modals-followers",
+            [
+                'user' => $this->user,
+                'pageMode' => request()->mode,
+            ]
+        );
+        
         $this->updateDataUser();
-        //dd($data);
     }
     
     public function follow()
@@ -74,7 +78,6 @@ class Show extends Component
             ]
         ))->toOthers();
         
-        
         $this->updateDataUser();
     }
     
@@ -86,7 +89,7 @@ class Show extends Component
     
     public function loadMorePost()
     {
-        $this->perPage = $perPage;
+        $this->perPage += 1;
         $this->updateDataUser();
     }
     
@@ -100,34 +103,38 @@ class Show extends Component
     
     public function updateDataUser()
     {
-        $this->user =  User::where('username', $this->usernameUser)
+        $this->user =  User::where('username', $this->tempUsername)
                            ->first();
         
-        if (!$this->user) {
-            abort(404);
-        }
-        
-        $this->posts = $this->user
-                            ->posts()
-                            ->where('published', $this->showPostPublishedOnly)
-                            ->orderBy("published_at", "DESC")
-                            ->paginate($this->perPage, ['*'], null, 1);
+        $this->posts = $this->user->postsNew(
+            $this->showPostPublishedOnly,
+            $this->perPage
+        );
     }
     
-    public function mount(Request $request)
+    public function mount(User $user)
     {
-        $this->usernameUser = $request->username;
-        $this->updateDataUser();
+        // define user from route model binding
+        $this->user = $user;
+        $this->tempUsername = $user->username;
+        
+        // get user posts
+        $this->posts = $this->user->postsNew(
+            $this->showPostPublishedOnly,
+            $this->perPage
+        );
     }
+    
     
     public function render()
     {
         return view('livewire.pages.profile.show', [
             'user' => $this->user,
-            'follow' => $this->follow,
             'posts' => $this->posts,
-            'alert' => $this->alert,
-        ])->layout((Auth::check()) ? 'layouts.app' : 'layouts.guest');
-        
+        ])->layout(
+            (Auth::check())
+                ? 'layouts.app'
+                : 'layouts.guest'
+        );
     }
 }

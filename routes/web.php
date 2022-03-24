@@ -59,6 +59,6 @@ Route::middleware(['auth:sanctum', 'auth'])->group(function () {
     Route::get('/email/change', ChangeEmail::class)->name('verification.change-email');
 });
 
-Route::get('/{username}', Profile\Show::class)->name('profile.show');
+Route::get('/{user}', Profile\Show::class)->name('profile.show');
 
 require_once __DIR__ . '/jetstream.php';

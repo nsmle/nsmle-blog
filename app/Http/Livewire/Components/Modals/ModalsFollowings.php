@@ -5,12 +5,12 @@ namespace App\Http\Livewire\Components\Modals;
 use Livewire\Component;
 use LivewireUI\Modal\ModalComponent;
 use App\Models\User;
-use App\Models\Follower;
+use App\Events\NotifyEvent;
 use Auth;
 
 class ModalsFollowings extends ModalComponent
 {
-    public User $user;
+    public $user;
     
     private $followings;
     
@@ -24,45 +24,37 @@ class ModalsFollowings extends ModalComponent
         $this->updateData();
     }
     
-    public function follow($idUserWillFollow)
+    public function follow($followingId)
     {
-        $userWillFollow = User::find($idUserWillFollow);
+        $userForFollow = User::find($followingId);
+        $followStatus = $userForFollow->createOrDeleteFollower(Auth::user());
         
-        if (!empty($userWillFollow)) {
-            $followed = $userWillFollow->followers()
-                                       ->where('follower_id', Auth::id())
-                                       ->first();
-            
-            if (empty($followed)) {
-                Follower::create([
-                    'user_id' => $userWillFollow->id,
-                    'follower_id' => Auth::id()
-                ]);
-                $followStatus = 'follow';
-            } else {
-                $follow = Follower::where('user_id', $userWillFollow->id)
-                                  ->where('follower_id', Auth::id())
-                                  ->first();
-                
-                $follow->delete();
-                $followStatus = "unfollow";
-            }
-        }
+        // Send Notification to target User
+        broadcast(new NotifyEvent(
+            $userForFollow->id,
+            "user-follow",
+            [
+                'status' => $followStatus,
+                'time' => now()
+            ],
+            [
+                'user' => $userForFollow,
+                'follower' => Auth::user()
+            ]
+        ))->toOthers();
         
         return $this->updateData();
     }
     
     public function updateData()
     {
-        $this->followings = $this->user
-                                ->followings()
-                                ->paginate($this->perPage, ['*'], null, 1);
+        $this->followings = $this->user->followings($this->perPage);
     }
     
     
-    public function mount(User $user, $pageMode)
+    public function mount($user, $pageMode)
     {
-        $this->user = $user;
+        $this->user = User::find($user['id']);
         $this->pageMode = $pageMode;
         $this->updateData();
     }

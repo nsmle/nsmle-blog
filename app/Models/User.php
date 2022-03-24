@@ -63,24 +63,51 @@ class User extends Authenticatable implements MustVerifyEmail
         'profile_photo_url',
     ];
     
+    public function getRouteKeyName()
+    {
+        return "username";
+    }
+    
     public function scopeWithWhereHas($query, $relation, $constraint){
         return $query->whereHas($relation, $constraint)
         ->with([$relation => $constraint]);
     }
     
-    public function followers()
+    public function followers($paginate = null)
     {
+        if (!is_null($paginate)) {
+            return $this->belongsToMany(Self::class, 'followers', 'user_id', 'follower_id')->paginate($paginate);
+        }
+        
         return $this->belongsToMany(Self::class, 'followers', 'user_id', 'follower_id');
     }
 
-    public function followings()
+    public function followings($paginate = null)
     {
+        if (!is_null($paginate)) {
+            return $this->belongsToMany(Self::class, 'followers', 'follower_id', 'user_id')->paginate($paginate);
+        }
+        
         return $this->belongsToMany(Self::class, 'followers', 'follower_id', 'user_id');
     }
     
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+    
+    public function postsNew(bool $published = false, $pagination = null)
+    {
+        
+        if (!is_null($published) && is_null($pagination)) {
+            return $this->hasMany(Post::class)->latest()
+                        ->where('published', $published)
+                        ->get();
+        }
+        
+        return $this->hasMany(Post::class)->latest()
+                    ->where('published', $published)
+                    ->paginate($pagination);
     }
     
     protected function defaultProfilePhotoUrl()

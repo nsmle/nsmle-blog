@@ -42,11 +42,12 @@
                             <p class="text-xs md:text-lg cursor-pointer">Postingan</p>
                         </div>
                         
-                        <div wire:click='$emit("openModal", "components.modals.modals-followers", {{ json_encode([$user, request()->mode]) }})' class="w-1/4 md:w-1/4 text-center text-sm flex-wrap grid grid-rows-2 active:text-blue-500 hover:opacity-80">
+                        <div wire:click='$emit("openModal", "components.modals.modals-followers", {{ json_encode(["user" => $user, "pageMode" => request()->mode]) }})' class="w-1/4 md:w-1/4 text-center text-sm flex-wrap grid grid-rows-2 active:text-blue-500 hover:opacity-80">
+                        {{-- <div wire:click="getFollowers" class="w-1/4 md:w-1/4 text-center text-sm flex-wrap grid grid-rows-2 active:text-blue-500 hover:opacity-80"> --}}
                             <p class="font-bold md:text-xl cursor-pointer">{{ $user->followers->count() ?? 0 }}</p> 
                             <p class="text-xs md:text-lg cursor-pointer">Pengikut</p>
                         </div>
-                        <div wire:click='$emit("openModal", "components.modals.modals-followings", {{ json_encode([$user, request()->mode]) }})' class="w-1/4 md:w-1/4 text-center text-sm flex-wrap grid grid-rows-2 active:text-blue-500 hover:opacity-80">
+                        <div wire:click='$emit("openModal", "components.modals.modals-followings", {{ json_encode(["user" => $user, "pageMode" => request()->mode]) }})' class="w-1/4 md:w-1/4 text-center text-sm flex-wrap grid grid-rows-2 active:text-blue-500 hover:opacity-80">
                             <p class="font-bold md:text-xl cursor-pointer">{{ $user->followings->count() ?? 0 }}</p>
                             <p class="text-xs md:text-lg  cursor-pointer">Mengikuti</p>
                         </div>
