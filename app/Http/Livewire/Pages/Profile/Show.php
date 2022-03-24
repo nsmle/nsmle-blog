@@ -10,7 +10,8 @@ use App\Models\Follower;
 use Auth;
 use Livewire\WithPagination;
 
-use App\Events\UserStatus;
+//use App\Events\UserStatus;
+use App\Events\NotifyEvent;
 
 class Show extends Component
 {
@@ -31,7 +32,8 @@ class Show extends Component
     public function getListeners()
     {
         return [
-            'user.follow' => 'follow',
+            "echo-private:notify-event.".Auth::id().",.user-follow" => 'updateDataUser',
+            'user.follow' => 'updateDataUser',
             'echo:user-status,.status' => 'userStatus'
         ];
     }
@@ -44,7 +46,7 @@ class Show extends Component
     
     public function follow()
     {
-        if (!auth()->check()) {
+        if (!Auth::check()) {
             $this->updateDataUser();
             return $this->emit(
                 "openModal",
@@ -56,20 +58,23 @@ class Show extends Component
             );
         }
         
-        $followed = $this->user->followers()->where('follower_id', auth()->id())->first();
+        $followStatus = $this->user->createOrDeleteFollower(Auth::user());
         
-        if (empty($followed)) {
-            Follower::create(['user_id' => $this->user->id, 'follower_id' => auth()->user()->id]);
-            $followStatus = 'followed';
-        } else {
-            $follow = Follower::where('user_id', $this->user->id)
-                              ->where('follower_id', $followed->id)
-                              ->first();
-            $follow->delete();
-            $followStatus = "unfollow";
-        }
+        // Send Notification
+        broadcast(new NotifyEvent(
+            $this->user->id,
+            "user-follow",
+            [
+                'status' => $followStatus,
+                'time' => now()
+            ],
+            [
+                'user' => $this->user,
+                'follower' => Auth::user()
+            ]
+        ))->toOthers();
         
-        UserStatus::dispatch(Auth::user()->username, 'follow', ['followingUser' => $this->user->username, 'status' => $followStatus], 'status');
+        
         $this->updateDataUser();
     }
     
@@ -96,7 +101,6 @@ class Show extends Component
     public function updateDataUser()
     {
         $this->user =  User::where('username', $this->usernameUser)
-                           ->with([ 'followers', 'followings', 'posts'])
                            ->first();
         
         if (!$this->user) {

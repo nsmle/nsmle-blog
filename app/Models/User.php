@@ -117,5 +117,50 @@ class User extends Authenticatable implements MustVerifyEmail
         return 'Ikuti';
     }
     
+    public function createOrDeleteFollower(User $user)
+    {
+        $follower = Follower::where('user_id', $this->id)
+                         ->where('follower_id', $user->id)
+                         ->first();
+        
+        if (empty($follower)) {
+            $status = 'follow';
+            // Create Follower
+            $follow = Follower::create(['user_id' => $this->id, 'follower_id' => $user->id]);
+            // Create Notifications
+            $this->createOrDeleteNotificationUserFollow($status, $user, $follow);
+        } else {
+            $status = "unfollow";
+            // Delete Notifications
+            $this->createOrDeleteNotificationUserFollow($status, $user, $follower);
+            // Delete Follower
+            $follower->delete();
+        }
+        
+        return $status;
+    }
+    
+    public function createOrDeleteNotificationUserFollow(string $eventType, User $triggerUser, Follower $follow): void
+    {
+        if ($eventType == 'follow') {
+            Notifications::updateOrCreate([
+                'user_id'           =>  $this->id,
+                'trigger_user_id'   =>  $triggerUser->id,
+                'entity_id'         =>  $this->id,
+                'entity_type'       =>  'user',
+                'entity_event_id'   =>  $follow->id,
+                'entity_event_type' =>  $eventType
+            ]);
+        } else {
+            $notifyUserFollow = Notifications::where('trigger_user_id', $triggerUser->id)
+                ->where('entity_id', $this->id)
+                ->where('entity_type', 'user')
+                ->where('entity_event_id', $follow->id)
+                ->where('entity_event_type', 'follow')
+                ->first();
+            
+            (!empty($notifyUserFollow)) ? $notifyUserFollow->delete() : '';
+        }
+    }
     
 }

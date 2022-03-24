@@ -22,6 +22,7 @@ class Index extends Component
         return [
             "echo-private:notify-event.".Auth::id().",.post-like" => 'getUpdateNotifications',
             "echo-private:notify-event.".Auth::id().",.post-comment" => 'getUpdateNotifications',
+            "echo-private:notify-event.".Auth::id().",.user-follow" => 'getUpdateNotifications',
         ];
     }
     

@@ -16,27 +16,18 @@ class Notification extends Component
     public function getListeners()
     {
         return [
-            "readAllUnreadNotif" => "updateNotif",
-            "echo-private:notify-event.".Auth::id().",.post-like" => 'notificationPost',
-            "echo-private:notify-event.".Auth::id().",.post-comment" => 'notificationPost',
+            "readAllUnreadNotif" => "getUpdateNotifications",
+            "echo-private:notify-event.".Auth::id().",.post-like" => 'getUpdateNotifications',
+            "echo-private:notify-event.".Auth::id().",.post-comment" => 'getUpdateNotifications',
+            "echo-private:notify-event.".Auth::id().",.user-follow" => 'getUpdateNotifications',
         ];
-    }
-    
-    public function updateNotif()
-    {
-        $this->notifications = $this->getUpdateNotifications();
-    }
-    
-    public function notificationPost()
-    {
-        $this->notifications = $this->getUpdateNotifications();
     }
     
     public function getUpdateNotifications()
     {
-        return Notifications::where('user_id', Auth::id())
-                            ->where('read', false)
-                            ->get();
+        $this->notifications = Notifications::where('user_id', Auth::id())
+            ->where('read', false)
+            ->get();
     }
     
     /*
@@ -51,7 +42,7 @@ class Notification extends Component
     public function mount(Request $request)
     {
         $this->activePage = $request->routeIs('dashboard.notification.*');
-        $this->notifications = $this->getUpdateNotifications();
+        $this->getUpdateNotifications();
     }
     
     public function render()

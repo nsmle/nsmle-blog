@@ -7,6 +7,8 @@ use Auth;
 
 class ToastNotify extends Component
 {
+    public $toastNotifyUserFollowed;
+    
     public $toastNotifyPostLiked;
     
     public $toastNotifyPostCommented;
@@ -16,6 +18,16 @@ class ToastNotify extends Component
         return [
             "echo-private:notify-event.".Auth::id().",.post-like" => 'toastNotifyPostLiked',
             "echo-private:notify-event.".Auth::id().",.post-comment" => 'toastNotifyPostCommented',
+            "echo-private:notify-event.".Auth::id().",.user-follow" => 'toastNotifyUserFollow',
+        ];
+    }
+    
+    public function toastNotifyUserFollow($dataUserFollowed)
+    {
+        $this->toastNotifyUserFollowed = [
+            'info' => $dataUserFollowed['info'],
+            'user' => $dataUserFollowed['data']['user'],
+            'follower' => $dataUserFollowed['data']['follower']
         ];
     }
     
