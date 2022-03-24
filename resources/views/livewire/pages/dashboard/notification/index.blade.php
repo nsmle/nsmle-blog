@@ -72,7 +72,7 @@
                         
                         <!-- Notify User Follow -->
                         @if ($notif->entity_type === 'user' && $notif->entity_event_type === "follow") 
-                            <li wire:click="readNotif({{ $notif->id }}, '/{{ $notif->triggerUser->username }}'" class="flex items-center px-2 py-3 sm:py-4 @if (!$notif->read) bg-blue-50 dark:bg-midnight-200 hover:bg-blue-50/80 dark:hover:bg-midnight-200/80 @else hover:bg-blue-50/40 dark:hover:bg-midnight-400 @endif active:bg-blue-100/70 dark:active:bg-midnight-300 cursor-pointer rounded">
+                            <li wire:click="readNotif({{ $notif->id }}, '/{{ $notif->triggerUser->username }}')" class="flex items-center px-2 py-3 sm:py-4 @if (!$notif->read) bg-blue-50 dark:bg-midnight-200 hover:bg-blue-50/80 dark:hover:bg-midnight-200/80 @else hover:bg-blue-50/40 dark:hover:bg-midnight-400 @endif active:bg-blue-100/70 dark:active:bg-midnight-300 cursor-pointer rounded">
                                 <div class="inline-block relative shrink-0">
                                     <a href="/{{ $notif->triggerUser->username }}">
                                         <img class="w-12 h-12 rounded-full" src="{{ asset($notif->triggerUser->profile_photo_url) }}" alt="{{ $notif->triggerUser->name }}" loading="lazy"/>
@@ -157,7 +157,7 @@
                 @else
                 <div class="inline h-96 justify-center text-center">
                     <x-illustrations.illustration-easter-egg-hunt class="inline"/>
-                    <p class="-mt-8 md:-mt-20 md:mb-20 text-sm md:text-lg font-medium text-slate-700 dark:text-slate-300">Anda belum memiliki notifikasi</p>
+                    <p class="-mt-8 md:-mt-20 mb-20 text-sm md:text-lg font-medium text-slate-700 dark:text-slate-300">Anda belum memiliki notifikasi</p>
                 </div>
                 @endif
            </div>

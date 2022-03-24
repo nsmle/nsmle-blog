@@ -5,47 +5,28 @@ namespace App\Http\Livewire\Pages\Profile;
 use Livewire\Component;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Auth;
-// use Livewire\WithPagination;
-
-//use App\Events\UserStatus;
+use App\Events\UserEvent;
 use App\Events\NotifyEvent;
+use Auth;
 
 class Show extends Component
 {
-    // use WithPagination;
-    
     public $user;
     
-    protected $posts;
+    private $posts;
     
     public $usernameUser;
     
     public $showPostPublishedOnly = true;
     
-    public $perPage = 1;
+    public $perPage = 10;
     
     public function getListeners()
     {
         return [
             "echo-private:notify-event.".Auth::id().",.user-follow" => 'updateDataUser',
-            'user.follow' => 'updateDataUser',
-            'echo:user-status,.status' => 'userStatus'
+            'echo:user-event,.user-follow' => 'updateDataUser'
         ];
-    }
-    
-    public function getFollowers()
-    {
-        $this->emit(
-            "openModal",
-            "components.modals.modals-followers",
-            [
-                'user' => $this->user,
-                'pageMode' => request()->mode,
-            ]
-        );
-        
-        $this->updateDataUser();
     }
     
     public function follow()
@@ -64,7 +45,7 @@ class Show extends Component
         
         $followStatus = $this->user->createOrDeleteFollower(Auth::user());
         
-        // Send Notification
+        // Send Notification to target user
         broadcast(new NotifyEvent(
             $this->user->id,
             "user-follow",
@@ -78,6 +59,9 @@ class Show extends Component
             ]
         ))->toOthers();
         
+        // Send Notification to all guest/user for refreshed data
+        UserEvent::dispatch('user-follow', $this->user->username);
+        
         $this->updateDataUser();
     }
     
@@ -89,7 +73,7 @@ class Show extends Component
     
     public function loadMorePost()
     {
-        $this->perPage += 1;
+        $this->perPage += 10;
         $this->updateDataUser();
     }
     
@@ -99,7 +83,6 @@ class Show extends Component
         $this->showPostPublishedOnly = $showPostPublishedOnly;
         $this->updateDataUser();
     }
-    
     
     public function updateDataUser()
     {

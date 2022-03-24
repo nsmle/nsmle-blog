@@ -10,39 +10,34 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-use App\Models\User;
-
-class UserStatus implements ShouldBroadcast
+class UserEvent implements ShouldBroadcast
 {
-    protected $userUsername;
-    
-    protected $userStatus;
-    
-    protected $data;
+    use Dispatchable, InteractsWithSockets, SerializesModels;
     
     protected $listen;
     
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    protected $userUsername;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(string $userUsername, string $userStatus, array $data, string $listen)
+    
+    public function __construct(string $listen, string $userUsername)
     {
-        $this->userUsername = $userUsername;
-        $this->userStatus = $userStatus;
-        $this->data = $data;
         $this->listen = $listen;
+        $this->userUsername = $userUsername;
     }
     
     public function broadcastWith()
     {
         return [
-            'user' => $this->userUsername,
-            'userStatus' => $this->userStatus,
-            'data' => $this->data
+            'data' => [
+                'user' => [
+                    'username' => $this->userUsername
+                ],
+            ],
         ];
             
     }
@@ -52,7 +47,7 @@ class UserStatus implements ShouldBroadcast
         return $this->listen;
     }
     
-
+    
     /**
      * Get the channels the event should broadcast on.
      *
@@ -60,6 +55,6 @@ class UserStatus implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('user-status');
+        return new Channel('user-event');
     }
 }

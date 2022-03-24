@@ -35,6 +35,7 @@ class Index extends Component
     public function readNotif($notifId, $redirect)
     {
         $notif = Notifications::find($notifId);
+        
         if (!empty($notif)) {
             $notif->update([
                 'read' => true,
@@ -57,8 +58,7 @@ class Index extends Component
     
     public function getUpdateNotifications()
     {
-        $this->notifications = Notifications::where('user_id', Auth::id())
-                                            ->orderBy('created_at', 'DESC')
+        $this->notifications = Notifications::where('user_id', Auth::id())->latest()
                                             ->with(['user', 'post', 'comment'])
                                             ->paginate($this->perPage, ['*'], null, 1);
         

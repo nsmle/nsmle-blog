@@ -3,16 +3,17 @@
 namespace App\Http\Livewire\Components\PostAction;
 
 use Livewire\Component;
+use App\Models\Post;
 use App\Models\PostLike;
 use App\Models\Notifications;
-use Auth;
 use App\Events\PostEvent;
 use App\Events\NotifyEvent;
+use Auth;
 
 class Like extends Component
 {
     
-    public $post;
+    public Post $post;
     
     public $postId;
     
@@ -25,17 +26,10 @@ class Like extends Component
     
     public function getListeners()
     {
-        if (Auth::check() && Auth::id() === $this->post->user->id) {
-            $listeners = [
-                "echo-private:notify-event.".Auth::id().",.post-like" => 'postLiked'
-            ];
-        } else {
-            $listeners = [
-                "echo:post-event,.post-like" => 'postLiked',
-            ];
-        }
-        
-        return $listeners;
+        return [
+            "echo-private:notify-event.".Auth::id().",.post-like" => 'postLiked',
+            "echo:post-event,.post-like" => 'postLiked',
+        ];
     }
     
     public function postLiked($data)
@@ -47,66 +41,30 @@ class Like extends Component
     
     public function like()
     {
-        
         if (Auth::check()) {
             
-            // Save notifications
+            $postLikeStatus = $this->post->createOrDeletePostLike(Auth::user());
+            
             if (Auth::id() !== $this->post->user->id) {
-                
-                if (!empty($this->isLiked)) {
-                    // Delete Post Like
-                    $this->isLiked->delete();
-                    $status = 'unlike';
-                    
-                    // Delete Notifications
-                    $postLikeNotify = Notifications::where('user_id', $this->post->user->id)
-                                                 ->where('entity_id', $this->post->id)
-                                                 ->where('entity_type', 'post')
-                                                 ->where('entity_event_id', $this->isLiked->id)
-                                                 ->where('entity_event_type', 'like')
-                                                 ->first();
-                    if (!empty($postLikeNotify)) {
-                        $postLikeNotify->delete();
-                    }
-                } else {
-                    // Create Post Like
-                    $postLike = PostLike::create([
-                        'post_id' => $this->postId,
-                        'user_id' => Auth::id()
-                    ]);
-                    
-                    $status = 'like';
-                    
-                    // Create Notification
-                    Notifications::updateOrCreate([
-                        'user_id' => $this->post->user->id,
-                        'trigger_user_id' => Auth::id(),
-                        'entity_id' => $this->post->id,
-                        'entity_type' => 'post',
-                        'entity_event_id' => $postLike->id,
-                        'entity_event_type' => 'like'
-                    ]);
-                }
-                
-            
-            
                 // Dispatch Notifications
-                NotifyEvent::dispatch(
+                broadcast(new NotifyEvent(
                     $this->post->user->id,
                     'post-like',
                     [
-                        'status' => $status,
+                        'status' => $postLikeStatus,
                         'time' => now()
                     ],
                     [
                         'post' => $this->post,
                         'trigger_user' => Auth::user(),
                     ]
-                );
+                ))->toOthers();
                 
             }
             // Dispatch PostEvent For No Authentication
-            PostEvent::dispatch('post-like', $this->post->slug);
+            broadcast(new PostEvent('post-like', $this->post->slug))->toOthers();
+            
+            $this->refreshData();
         } else {
             $this->emit(
                 "openModal",
@@ -122,18 +80,22 @@ class Like extends Component
     
     public function refreshData()
     {
-        $this->postLikes = PostLike::where('post_id', $this->postId)->get();
+        // Update data post
+        $this->post = Post::find($this->postId);
+        
+        // Update data post likes
+        $this->postLikes = $this->post->like;
         
         if (Auth::check()) {
-            $this->isLiked = $this->postLikes->where('user_id', Auth::id())->where('post_id', $this->postId)->first();
+            $this->isLiked = $this->post
+                                  ->isLiked(Auth::user());
         } else {
             $this->isLiked = null;
         }
     }
     
-    public function mount($post)
+    public function mount(Post $post)
     {
-        $this->post = $post;
         $this->postId = $post->id;
         $this->refreshData();
         $this->isPagePost = (request()->routeIs('dashboard.post.*') || request()->routeIs('post.*')) ? true : false;

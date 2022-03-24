@@ -6,6 +6,7 @@ use Livewire\Component;
 use LivewireUI\Modal\ModalComponent;
 use App\Models\User;
 use App\Events\NotifyEvent;
+use App\Events\UserEvent;
 use Auth;
 
 class ModalsFollowings extends ModalComponent
@@ -42,6 +43,9 @@ class ModalsFollowings extends ModalComponent
                 'follower' => Auth::user()
             ]
         ))->toOthers();
+        
+        // Send Notification to all guest/user for refreshed data
+        UserEvent::dispatch('user-follow', $this->user->username);
         
         return $this->updateData();
     }

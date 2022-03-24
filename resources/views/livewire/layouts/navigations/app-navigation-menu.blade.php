@@ -14,19 +14,19 @@
     }"
     x-init="(window.scrollY > 0) ? document.querySelector('nav').classList.add('drop-shadow-md', 'bg-neutral-100', 'dark:bg-midnight-300') : '';">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" :class="{'bg-neutral-400 dark:bg-midnight-500/60': open, '': ! open }">
+    <div class="max-w-7xl sm:hidden md:block mx-auto px-4 sm:px-6 lg:px-8" :class="{'bg-neutral-400 dark:bg-midnight-500/60': open, '': ! open }">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex">
                     <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center">
                         <x-jet-application-mark class="block h-10 w-auto rounded" />
-                        <p class="text-2xl font-bold text-midnight-800 dark:text-neutral-100">{{ __('Blog') }}</p>
+                        <p class="text-2xl font-bold text-midnight-800 dark:text-neutral-100">{{ (config('app.name') !== 'Nsmle Blog') ? config('app.name') : __('Blog') }}</p>
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-2 sm:-my-px sm:ml-10 sm:flex justify-center text-center">
+                <div class="hidden space-x-2 sm:-my-px sm:ml-10 sm:flex justify-center items-center text-center">
                     <x-jet-nav-link href="{{ route('dashboard.home') }}" :active="request()->routeIs('dashboard')">
                         @if (request()->routeIs('dashboard.home'))
         				    <svg class="inline-block fill-midnight-800 dark:fill-slate-200 dark:hover:fill-salte-300 dark:hover:fill-slate-200 h-4 w-4 mr-1 ml-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6.63477851,18.7733424 L6.63477851,15.7156161 C6.63477851,14.9350667 7.27217143,14.3023065 8.05843544,14.3023065 L10.9326107,14.3023065 C11.310188,14.3023065 11.6723007,14.4512083 11.9392882,14.7162553 C12.2062757,14.9813022 12.3562677,15.3407831 12.3562677,15.7156161 L12.3562677,18.7733424 C12.3538816,19.0978491 12.4820659,19.4098788 12.7123708,19.6401787 C12.9426757,19.8704786 13.2560494,20 13.5829406,20 L15.5438266,20 C16.4596364,20.0023499 17.3387522,19.6428442 17.9871692,19.0008077 C18.6355861,18.3587712 19,17.4869804 19,16.5778238 L19,7.86685918 C19,7.13246047 18.6720694,6.43584231 18.1046183,5.96466895 L11.4340245,0.675869015 C10.2736604,-0.251438297 8.61111277,-0.221497907 7.48539114,0.74697893 L0.967012253,5.96466895 C0.37274068,6.42195254 0.0175522924,7.12063643 0,7.86685918 L0,16.568935 C0,18.4638535 1.54738155,20 3.45617342,20 L5.37229029,20 C6.05122667,20 6.60299723,19.4562152 6.60791706,18.7822311 L6.63477851,18.7733424 Z" transform="translate(2.5 2)"/></svg>
@@ -47,10 +47,7 @@
         				@endif
         				{{ __('Post') }}
                     </x-jet-nav-link>
-                    <x-jet-nav-link href="{{ route('dashboard.post.index') }}" :active="request()->routeIs('dashboard.post*')">
-                        <svg class="inline-block stroke-midnight-700 dark:stroke-slate-300/80 dark:hover:stroke-salte-300 dark:hover:stroke-slate-200 h-4 w-4 mr-1 ml-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M.00082545485 11.7871203L.00082545485 11.568135C.0329512746 10.9202451.240598836 10.2924906.602355621 9.74960514 1.20450201 9.09746185 1.61670318 8.29830554 1.79571385 7.43597814 1.79571385 6.76950123 1.79571385 6.09350321 1.85392645 5.4270263 2.15469153 2.21841601 5.32727806 3.37507799e-14 8.46105618 3.37507799e-14L8.53867298 3.37507799e-14C11.6724511 3.37507799e-14 14.8450376 2.21841601 15.1555048 5.4270263 15.2137174 6.09350321 15.1555048 6.76950123 15.2040153 7.43597814 15.3854338 8.30030508 15.7972211 9.10194449 16.3973735 9.75912624 16.7618363 10.2972046 16.9698126 10.9226612 16.9989037 11.568135L16.9989037 11.7775992C17.0205591 12.6480449 16.720769 13.4968208 16.1548211 14.167395 15.4069586 14.9514753 14.392113 15.4392693 13.3024038 15.5384332 10.1069938 15.8812057 6.8830333 15.8812057 3.68762325 15.5384332 2.59914366 15.4349924 1.58575794 14.9479001.835206008 14.167395.278 13.496309-.0177593319 12.6525831.00082545485 11.7871203zM6.05493552 18.8517756C6.55421005 19.478449 7.28739599 19.8840184 8.09222803 19.978725 8.89706007 20.0734316 9.70716835 19.8494655 10.3432635 19.3563938 10.5389031 19.2105605 10.7149406 19.0410062 10.8671768 18.8517756" transform="translate(3.5 2)"/></svg>
-                        {{ __('Notifications') }}
-                    </x-jet-nav-link>
+                    @livewire('layouts.navigations.notification')
                 </div>
                 
             </div>
@@ -248,7 +245,7 @@
         x-transition:leave="transition ease-in duration-100"
         x-transition:leave-start="transform opacity-100 scale-100"
         x-transition:leave-end="transform opacity-0 scale-95"
-        class="hidden w-full sm:hidden border-b border-gray-200 dark:border-midnight-700"
+        class="hidden md:hidden w-full border-b border-gray-200 dark:border-midnight-700"
         :class="{'rounded-b-lg bg-neutral-400 dark:bg-midnight-500/60': open, '': ! open}"
     >
         <div class="pt-2 pb-3 space-y-1">
