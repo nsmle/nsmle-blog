@@ -61,7 +61,12 @@
                                         </a>
                                     </h4>
                                     <div class="text-sm font-normal text-gray-700 dark:text-gray-300">
-                                        Berkomentar {{ mb_strimwidth(str_replace('.', '', strtolower($notif->comment->content)), 0, 70, '...') }} pada postingan {{ mb_strimwidth(str_replace('.', '', strtolower($notif->post->title)), 0, 70, '...') }} yang anda miliki
+                                        
+                                        @if (!empty($notif->comment->reply_to_id) && $notif->comment->reply_to_id === Auth::id())
+                                            Membalas komentar anda {{ mb_strimwidth(str_replace('.', '', strtolower($notif->comment->content)), 0, 70, '...') }} pada postingan {{ mb_strimwidth(str_replace('.', '', strtolower($notif->post->title)), 0, 70, '...') }} yang anda miliki
+                                        @else
+                                            Berkomentar {{ mb_strimwidth(str_replace('.', '', strtolower($notif->comment->content)), 0, 70, '...') }} pada postingan {{ mb_strimwidth(str_replace('.', '', strtolower($notif->post->title)), 0, 70, '...') }} yang anda miliki
+                                        @endif
                                     </div> 
                                     <span class="text-xs font-medium text-blue-600 dark:text-blue-500">
                                         {{ $notif->created_at->diffForHumans() }}
@@ -151,7 +156,6 @@
                             </div>
                         </a>
                     </li>
-                    --}}
                     
                 </ul>
                 @else
