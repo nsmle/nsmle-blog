@@ -1,8 +1,45 @@
 <div>
+    @if (!empty($toastNotifyPostReplied) && $toastNotifyPostReplied['info']['status'] === 'reply')
+        <div x-data="" x-ref="notifyPostReplied"
+            x-init="setTimeout(() => {
+                Livewire.emit('clearDataToastNotify');
+                $refs.notifyPostReplied.remove();
+            }, 8000)"
+        >
+            <div class="fixed top-2 right-2 z-50 p-4 w-full max-w-xs text-gray-900 bg-white rounded-lg shadow dark:bg-midnight-40 dark:text-gray-30 animate-pop transition" role="alert">
+                <div class="flex items-center mb-3">
+                    <span class="mb-1 text-sm font-semibold text-gray-900 dark:text-white">New notification</span>
+                    <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-midnight-40 dark:hover:bg-midnight-90" data-collapse-toggle="toast-notification" aria-label="Close"
+                          @click="$refs.notifyPostReplied.remove()"
+                          wire:click="clearDataToastNotify"
+                    >
+                        <span class="sr-only">Close</span>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    </button>
+                </div>
+                <div class="flex items-center">
+                    <div class="inline-block relative shrink-0">
+                        <a href="/{{ $toastNotifyPostReplied['trigger_user']['username'] }}">
+                            <img class="w-12 h-12 rounded-full" src="{{ asset($toastNotifyPostReplied['trigger_user']['profile_photo_url']) }}" alt="{{ $toastNotifyPostReplied['trigger_user']['name'] }}" loading="lazy"/>
+                        </a>
+                        <span class="inline-flex absolute right-0 bottom-0 justify-center items-center w-6 h-6 bg-blue-600 rounded-full">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M13.191,0 C16.28,0 18,1.78 18,4.83 L18,4.83 L18,15.16 C18,18.26 16.28,20 13.191,20 L13.191,20 L4.81,20 C1.77,20 0,18.26 0,15.16 L0,15.16 L0,4.83 C0,1.78 1.77,0 4.81,0 L4.81,0 Z M5.08,13.74 C4.78,13.71 4.49,13.85 4.33,14.11 C4.17,14.36 4.17,14.69 4.33,14.95 C4.49,15.2 4.78,15.35 5.08,15.31 L5.08,15.31 L12.92,15.31 C13.319,15.27 13.62,14.929 13.62,14.53 C13.62,14.12 13.319,13.78 12.92,13.74 L12.92,13.74 Z M12.92,9.179 L5.08,9.179 C4.649,9.179 4.3,9.53 4.3,9.96 C4.3,10.39 4.649,10.74 5.08,10.74 L5.08,10.74 L12.92,10.74 C13.35,10.74 13.7,10.39 13.7,9.96 C13.7,9.53 13.35,9.179 12.92,9.179 L12.92,9.179 Z M8.069,4.65 L5.08,4.65 L5.08,4.66 C4.649,4.66 4.3,5.01 4.3,5.44 C4.3,5.87 4.649,6.22 5.08,6.22 L5.08,6.22 L8.069,6.22 C8.5,6.22 8.85,5.87 8.85,5.429 C8.85,5 8.5,4.65 8.069,4.65 L8.069,4.65 Z" transform="translate(3 2)"/></svg>
+                        </span>
+                    </div>
+                    <div class="ml-3 text-sm font-normal">
+                        <h4 class="text-sm font-semibold text-gray-900 dark:text-white"><a class="hover:text-blue-500" href="/{{ $toastNotifyPostReplied['trigger_user']['username'] }}">{{ $toastNotifyPostReplied['trigger_user']['name'] }}</a></h4>
+                        <div class="text-sm font-normal text-gray-700 dark:text-gray-300">Membalas postingan anda {{ mb_strimwidth(str_replace('.', '', strtolower($toastNotifyPostReplied['reply_post']['title'])), 0, 70, '...') }} dengan postingan {{ mb_strimwidth(str_replace('.', '', strtolower($toastNotifyPostReplied['post']['title'])), 0, 70, '...') }}</div> 
+                        <a href="/posts/{{ $toastNotifyPostReplied['post']['slug'] }}" class="text-xs font-medium text-blue-600 dark:text-blue-400">Lihat post balasan</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+    
     @if (!empty($toastNotifyPostLiked) && $toastNotifyPostLiked['info']['status'] === 'like')
         <div x-data="" x-ref="notifyPostLiked"
             x-init="setTimeout(() => {
-                $wire.toastNotifyPostLiked = null;
+                Livewire.emit('clearDataToastNotify')
                 $refs.notifyPostLiked.remove()
             }, 8000)"
         >
@@ -10,7 +47,8 @@
                 <div class="flex items-center mb-3">
                     <span class="mb-1 text-sm font-semibold text-gray-900 dark:text-white">New notification</span>
                     <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-midnight-40 dark:hover:bg-midnight-90" data-collapse-toggle="toast-notification" aria-label="Close"
-                          @click="$wire.toastNotifyPostLiked = null; $refs.notifyPostLiked.remove()"
+                          @click="$refs.notifyPostLiked.remove();"
+                          wire:click="clearDataToastNotify"
                     >
                         <span class="sr-only">Close</span>
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
@@ -36,17 +74,18 @@
     @endif
     
     @if (!empty($toastNotifyPostCommented) && $toastNotifyPostCommented['info']['status'] === 'comment')
-        <div x-data="" x-ref="toastNotifyPostCommented"
+        <div x-data="" x-ref="notifyPostCommented"
             x-init="setTimeout(() => {
-                //$wire.toastNotifyPostCommented = null;
-                $refs.toastNotifyPostCommented.remove()
+                Livewire.emit('clearDataToastNotify')
+                $refs.notifyPostCommented.remove()
             }, 8000)"
         >
             <div class="fixed top-2 right-2 z-50 p-4 w-full max-w-xs text-gray-900 bg-white rounded-lg shadow dark:bg-midnight-40 dark:text-gray-30 animate-pop transition" role="alert">
                 <div class="flex items-center mb-3">
                     <span class="mb-1 text-sm font-semibold text-gray-900 dark:text-white">New notification</span>
                     <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-midnight-40 dark:hover:bg-midnight-90" data-collapse-toggle="toast-notification" aria-label="Close"
-                          @click="$wire.toastNotifyPostCommented = null; $refs.notifyPostLiked.remove()"
+                          @click="$refs.notifyPostCommented.remove()"
+                          wire:click="clearDataToastNotify"
                     >
                         <span class="sr-only">Close</span>
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
@@ -74,17 +113,18 @@
     @endif
     
     @if (!empty($toastNotifyUserFollowed) && $toastNotifyUserFollowed['info']['status'] === 'follow')
-        <div x-data="" x-ref="toastNotifyUserFollowed"
+        <div x-data="" x-ref="notifyUserFollowed"
             x-init="setTimeout(() => {
-                //$wire.toastNotifyUserFollowed = null;
-                $refs.toastNotifyUserFollowed.remove()
+                Livewire.emit('clearDataToastNotify')
+                $refs.notifyUserFollowed.remove()
             }, 8000)"
         >
             <div class="fixed top-2 right-2 z-50 p-4 w-full max-w-xs text-gray-900 bg-white rounded-lg shadow dark:bg-midnight-40 dark:text-gray-30 animate-pop transition" role="alert">
                 <div class="flex items-center mb-3">
                     <span class="mb-1 text-sm font-semibold text-gray-900 dark:text-white">New notification</span>
                     <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-midnight-40 dark:hover:bg-midnight-90" data-collapse-toggle="toast-notification" aria-label="Close"
-                          @click="$wire.toastNotifyUserFollowed = null; $refs.notifyPostLiked.remove()"
+                          @click="$refs.notifyUserFollowed.remove()"
+                          wire:click="clearDataToastNotify"
                     >
                         <span class="sr-only">Close</span>
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>

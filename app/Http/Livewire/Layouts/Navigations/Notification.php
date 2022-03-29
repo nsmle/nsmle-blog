@@ -17,6 +17,7 @@ class Notification extends Component
     {
         return [
             "readAllUnreadNotif" => "getUpdateNotifications",
+            "echo-private:notify-event.".Auth::id().",.post-reply" => 'getUpdateNotifications',
             "echo-private:notify-event.".Auth::id().",.post-like" => 'getUpdateNotifications',
             "echo-private:notify-event.".Auth::id().",.post-comment" => 'getUpdateNotifications',
             "echo-private:notify-event.".Auth::id().",.user-follow" => 'getUpdateNotifications',

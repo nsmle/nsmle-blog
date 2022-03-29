@@ -7,19 +7,31 @@ use Auth;
 
 class ToastNotify extends Component
 {
-    public $toastNotifyUserFollowed;
+    private $toastNotifyUserFollowed;
     
-    public $toastNotifyPostLiked;
+    private $toastNotifyPostReplied;
     
-    public $toastNotifyPostCommented;
+    private $toastNotifyPostLiked;
+    
+    private $toastNotifyPostCommented;
     
     public function getListeners()
     {
         return [
+            'clearDataToastNotify' => 'clearDataToastNotify',
+            "echo-private:notify-event.".Auth::id().",.post-reply" => 'toastNotifyPostReplied',
             "echo-private:notify-event.".Auth::id().",.post-like" => 'toastNotifyPostLiked',
             "echo-private:notify-event.".Auth::id().",.post-comment" => 'toastNotifyPostCommented',
             "echo-private:notify-event.".Auth::id().",.user-follow" => 'toastNotifyUserFollow',
         ];
+    }
+    
+    public function clearDataToastNotify()
+    {
+        $this->toastNotifyUserFollowed = null;
+        $this->toastNotifyPostReplied = null;
+        $this->toastNotifyPostLiked = null;
+        $this->toastNotifyPostCommented = null;
     }
     
     public function toastNotifyUserFollow($dataUserFollowed)
@@ -28,6 +40,16 @@ class ToastNotify extends Component
             'info' => $dataUserFollowed['info'],
             'user' => $dataUserFollowed['data']['user'],
             'follower' => $dataUserFollowed['data']['follower']
+        ];
+    }
+    
+    public function toastNotifyPostReplied($dataPostReply)
+    {
+        $this->toastNotifyPostReplied = [
+            'info' => $dataPostReply['info'],
+            'post' => $dataPostReply['data']['post'],
+            'reply_post' => $dataPostReply['data']['reply_post'],
+            'trigger_user' => $dataPostReply['data']['trigger_user']
         ];
     }
     
@@ -58,6 +80,8 @@ class ToastNotify extends Component
     {
         
         return view('livewire.components.toasts.toast-notify', [
+            'toastNotifyUserFollowed' => $this->toastNotifyUserFollowed,
+            'toastNotifyPostReplied' => $this->toastNotifyPostReplied,
             'toastNotifyPostLiked' => $this->toastNotifyPostLiked,
             'toastNotifyPostCommented' => $this->toastNotifyPostCommented
         ]);

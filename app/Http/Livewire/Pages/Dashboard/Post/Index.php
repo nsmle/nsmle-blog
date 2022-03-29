@@ -29,22 +29,9 @@ class Index extends Component
     public function deletePost($id, $slug, $title)
     {
         $post = Post::find($id);
-        
-        // Delete Tags
-        if (!empty($post->tags)) {
-            $tags = PostTags::where('post_id', $post->id)->get();
-            PostTags::destroy($tags);
+        if (!empty($post)) {
+            $post->delete();
         }
-        
-        // Delete Cover
-        if (!empty($post->cover)) {
-            if (File::exists(public_path($post->cover))) {
-                File::delete(public_path($post->cover));
-            }
-        }
-        
-        // Delete Post
-        $post->delete();
         
         $this->dispatchBrowserEvent('postDeleted', [ 'id' => $id, 'slug' => $slug, 'title' => $title ]);
     }

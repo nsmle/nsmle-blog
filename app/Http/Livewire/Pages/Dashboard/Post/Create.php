@@ -13,6 +13,8 @@ use App\Models\Post;
 use App\Models\Category;
 use App\Models\Tags;
 use App\Models\PostTags;
+use App\Models\Notifications;
+use App\Events\NotifyEvent;
 
 
 class Create extends Component
@@ -83,6 +85,7 @@ class Create extends Component
         
         $coverName = $this->cover->hashName();
         $parentPost = (!empty($this->replyToPost)) ? $this->replyToPost['id'] : null;
+        
         $post = [
             'parent_id' => $parentPost,
             'user_id' => Auth::user()->id,
@@ -100,13 +103,13 @@ class Create extends Component
         }
         
         
-        $createPost = Post::create($post);
+        $createdPost = Post::create($post);
         
         if (!empty($data['tags'])) {
             
             foreach (explode(',', $data['tags']) as $tagId) {
                     $tags = [
-                        'post_id'   => $createPost->id,
+                        'post_id'   => $createdPost->id,
                         'tags_id' => $tagId
                     ];
                     PostTags::create($tags);
@@ -115,7 +118,39 @@ class Create extends Component
         
         $this->cover->storeAs('posts-cover', $coverName);
         
-        return redirect()->to(route('dashboard.post.index'))->with("toast_success", "Postingan berhasil ditambahkan.");
+        $this->createAndDispatchNotifPostReply($createdPost);
+        
+        return redirect()->to(route('dashboard.post.index'))->with("toastStatus", "Postingan berhasil ditambahkan.");
+    }
+    
+    public function createAndDispatchNotifPostReply(Post $post)
+    {
+        if (!empty($this->replyToPost) && Auth::id() !== $this->replyToPost['user']['id']) {
+            // Create Notification
+            Notifications::updateOrCreate([
+                'user_id' => $this->replyToPost['user']['id'],
+                'trigger_user_id' => Auth::id(),
+                'entity_id' => $post->id,
+                'entity_type' => 'post',
+                'entity_event_id' => $post->id,
+                'entity_event_type' => "reply"
+            ]);
+            
+            // Dispatch Notifications
+            broadcast(new NotifyEvent(
+                $this->replyToPost['user']['id'],
+                'post-reply',
+                [
+                    'status' => "reply",
+                    'time' => now()
+                ],
+                [
+                    'post' => $post,
+                    'reply_post' => $this->replyToPost,
+                    'trigger_user' => Auth::user(),
+                ]
+            ))->toOthers();
+        }
     }
     
     
@@ -154,7 +189,6 @@ class Create extends Component
     
     public function mount(Request $request)
     {
-        
         if ($request->session()->exists('reply')) {
             $this->replyToPost = session('reply');
         }

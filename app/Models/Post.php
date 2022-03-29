@@ -25,6 +25,39 @@ class Post extends Model
         ];
     }
     
+    public static function boot()
+    {
+        parent::boot();
+        
+        static::deleting(function ($post) {
+            
+            // update all child post
+            $post->allChild()->update(["parent_id" => null]);
+            
+            // Delete all Tags
+            $post->tags()->delete();
+            
+            // Delete all Post Like
+            $post->like()->delete();
+            
+            // Delete all Post Comment
+            $post->Comment()->delete();
+            
+            // Delete Notifications post reply
+            $notifPostReply = $post->notifPostReply();
+            if (!empty($notifPostReply)) {
+                $notifPostReply->delete();
+            }
+            
+            // Delete Cover
+            if (!empty($post->cover)) {
+                if (\File::exists(public_path($post->cover))) {
+                    \File::delete(public_path($post->cover));
+                }
+            }
+        });
+    }
+    
     public function getRouteKeyName()
     {
         return 'slug';
@@ -42,10 +75,22 @@ class Post extends Model
     
     public function child()
     {
-        //return $this->hasMany($this, 'parent_id', 'id');
-        
         return $this->hasMany($this, 'parent_id', 'id')->where('published', true);
-        
+    }
+    
+    public function allChild()
+    {
+        return $this->hasMany($this, 'parent_id', 'id');
+    }
+    
+    public function notifPostReply()
+    {
+        return Notifications::where('trigger_user_id', $this->user->id)
+                            ->where('entity_id', $this->id)
+                            ->where('entity_type', 'post')
+                            ->where('entity_event_id', $this->id)
+                            ->where('entity_event_type', 'reply')
+                            ->first();
     }
     
     public function category()
@@ -78,55 +123,4 @@ class Post extends Model
         return $this->like->where('user_id', $user->id)->first();
     }
     
-    public function createOrDeletePostLike(User $user): string
-    {
-        $isLiked = $this->isLiked($user);
-        
-        if (empty($isLiked)) {
-            // Create Post Like
-            $postLiked = PostLike::create([
-                'post_id' => $this->id,
-                'user_id' => $user->id
-            ]);
-            // Status post liked
-            $status = "like";
-            //Create Notifications
-            $this->createOrDeleteNotificationPostLike($status, $user, $postLiked);
-        } else {
-            // Status post unliked
-            $status = "unlike";
-            //Create Notifications
-            $this->createOrDeleteNotificationPostLike($status, $user, $isLiked);
-            //Delete Post like
-            $isLiked->delete();
-        }
-        
-        return $status;
-    }
-    
-    
-    public function createOrDeleteNotificationPostLike(string $eventType, User $triggerUser, PostLike $postLike): void
-    {
-        if ($this->user->id !== $triggerUser->id) {
-            if ($eventType == 'like') {
-                Notifications::updateOrCreate([
-                    'user_id' => $this->user->id,
-                    'trigger_user_id' => $triggerUser->id,
-                    'entity_id' => $this->id,
-                    'entity_type' => 'post',
-                    'entity_event_id' => $postLike->id,
-                    'entity_event_type' => 'like'
-                ]);
-            } else {
-                $notifyPostLiked = Notifications::where('trigger_user_id', $triggerUser->id)
-                    ->where('entity_id', $this->id)
-                    ->where('entity_type', 'post')
-                    ->where('entity_event_id', $postLike->id)
-                    ->where('entity_event_type', 'like')
-                    ->first();
-                
-                (!empty($notifyPostLiked)) ? $notifyPostLiked->delete() : '';
-            }
-        }
-    }
 }
