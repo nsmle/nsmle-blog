@@ -1,11 +1,11 @@
-<div>
+<div class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
     
     <div class="flex justify-center mt-4">
         <h1 class="text-2xl text-bold text-center text-slate-800 dark:text-slate-100">Semua Post</h1>
     </div>
     
     <div class="flex justify-center mt-4">
-        <div class="inline-flex md:items-center md:gap-8 w-11/12"
+        <div class="inline-flex md:items-center md:gap-8 w-full"
             x-data="{ searching: false }"
         >
             <x-buttons.button-primary wire:loading.attr="disabled" wire:click="createNewPost" class="mt-1 hidden md:block md:w-4/12 disabled:opacity-40">
@@ -41,7 +41,7 @@
     </div>
     
     <div class="flex mt-4 justify-center md:hidden">
-        <div class="w-11/12">
+        <div class="w-full">
             <x-buttons.button-primary wire:click="createNewPost">
                 <i class="fa-solid fa-plus mr-2"></i>Buat Post Baru
             </x-buttons.button-primary>
@@ -51,7 +51,7 @@
     
     <div class="flex justify-center">
         <!-- Table All Post -->
-        <div class="flex w-11/12 mb-8 mt-4 content-center justify-center">
+        <div class="flex w-full mb-8 mt-4 content-center justify-center">
             <div class="flex flex-col mx-auto overflow-y-hidden overflow-x-scroll pb-6 scrollbar scrollbar-thumb-slate-400 scrollbar-track-slate-200 dark:scrollbar-thumb-midnight-100 dark:scrollbar-track-midnight-500 rounded-md">
               <div class="-my-2 sm:-mx-6 lg:-mx-8">
                 <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
@@ -192,12 +192,12 @@
               </div>
             </div>
         </div>
-    </div>
+</div>
     
     
     @if($posts instanceof \Illuminate\Pagination\AbstractPaginator)
     <div class="flex mt-4 mb-12 justify-center">
-        <div class="w-11/12 text-center justify-center">
+        <div class="w-full text-center justify-center">
         {{ $posts->links('livewire.layouts.pagination') }}
         </div>
     </div>

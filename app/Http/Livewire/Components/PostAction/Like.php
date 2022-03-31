@@ -23,6 +23,10 @@ class Like extends Component
     
     public $isPagePost;
     
+    public $attributeClass;
+    public $attributeHeightWidth;
+    public $attributeAfterText;
+    
     
     public function getListeners()
     {
@@ -94,18 +98,26 @@ class Like extends Component
         }
     }
     
-    public function mount(Post $post)
+    public function mount(Post $post, string $class = null, int $hw = null, string $afterText = null)
     {
         $this->postId = $post->id;
         $this->refreshData();
         $this->isPagePost = (request()->routeIs('dashboard.post.*') || request()->routeIs('post.*')) ? true : false;
+        $this->attributeClass = $class;
+        $this->attributeHeightWidth = $hw;
+        $this->attributeAfterText = $afterText;
     }
     
     public function render()
     {
         return view('livewire.components.post-action.like',[
             'postLikes' => $this->postLikes,
-            'isLiked' => $this->isLiked
+            'isLiked' => $this->isLiked,
+            'attribute' => [
+                'class' => $this->attributeClass,
+                'heightWidth' => $this->attributeHeightWidth,
+                'afterText' => $this->attributeAfterText,
+            ]
         ]);
     }
 }

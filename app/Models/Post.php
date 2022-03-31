@@ -123,4 +123,20 @@ class Post extends Model
         return $this->like->where('user_id', $user->id)->first();
     }
     
+    public function createOrDeletePostLike(User $user)
+    {
+        $isLiked = $this->isLiked($user);
+        if (!empty($isLiked)) {
+            $isLiked->delete();
+            return 'unlike';
+        }
+        
+        
+        PostLike::create([
+            'user_id' => $user->id,
+            'post_id' => $this->id
+        ]);
+        return 'like';
+    }
+    
 }

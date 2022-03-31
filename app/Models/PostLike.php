@@ -36,18 +36,21 @@ class PostLike extends Model
         return $this->belongsTo(User::class);
     }
     
-    public function createOrDeleteNotifPostLiked(bool $isCreatePostLike = false): void
+    public function createOrDeleteNotifPostLiked(bool $isCreatePostLike = false)
     {
-        if ($isCreatePostLike) {
-            Notifications::create([
-                'user_id'           => $this->post->user->id,
-                'trigger_user_id'   => $this->user->id,
-                'entity_id'         => $this->post->id,
-                'entity_type'       => 'post',
-                'entity_event_id'   => $this->id,
-                'entity_event_type' => 'like'
-            ]);
-        } else {
+        
+        if ($this->user->id != $this->post->user->id) {
+            if ($isCreatePostLike) {
+                return Notifications::create([
+                    'user_id'           => $this->post->user->id,
+                    'trigger_user_id'   => $this->user->id,
+                    'entity_id'         => $this->post->id,
+                    'entity_type'       => 'post',
+                    'entity_event_id'   => $this->id,
+                    'entity_event_type' => 'like'
+                ]);
+            }
+            
             $postLiked = Notifications::where('user_id', $this->post->user->id)
                                   ->where('trigger_user_id', $this->user->id)
                                   ->where('entity_id', $this->post->id)
@@ -55,7 +58,7 @@ class PostLike extends Model
                                   ->where('entity_event_id', $this->id)
                                   ->where('entity_event_type', 'like')
                                   ->first();
-            $postLiked->delete();
+            return $postLiked->delete();
         }
     }
 }

@@ -2,7 +2,7 @@
     
     <div class="flex justify-center">
         
-        <div class="w-11/12">
+        <div class="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
             <div class="flex w-full md:gap-4">
                 <div class="block w-full md:w-9/12">
                     
@@ -65,7 +65,7 @@
                     @endif
                    
                     <h1 class="text-3xl text-slate-800 dark:text-slate-200 font-bold my-8">{{ $post->title }}</h1>
-                    <img class="w-full aspect-video object-cover cursor-pointer rounded-lg bg-slate-400 dark:bg-slate-700" src="{{ ($post->cover) ? asset($post->cover) : 'https://source.unsplash.com/700x400?'.urlencode($post->title) ; }}" alt="{{ $post->title }}" loading="lazy">
+                    <img class="w-full aspect-video object-cover cursor-pointer rounded-lg bg-slate-400 dark:bg-slate-700" src="{{ ($post->cover) ? asset($post->cover) : 'https://source.unsplash.com/700x400?'.urlencode($post->title) }}" alt="{{ $post->title }}" loading="lazy">
                 
                     <div class="flex w-full mt-4 px-2">
                         <div class="block w-full">
@@ -365,7 +365,7 @@
                     <div class="flex float-left ml-2">
                         @livewire('components.post-action.like', ['post' => $post])
                     </div>
-                    <button class="flex float-right active:scale-90 items-center px-3 py-2 border border-grenteel-200/30 dark:border-none text-xs leading-4 font-medium rounded-md text-slate-800 dark:text-slate-300 dark:font-semibold bg-neutral-400 dark:bg-midnight-100 dark:active:bg-midnight-100 dark:active:border-midnight-100 hover:shadow-neutral-300 hover:text-gray-700 focus:outline-none focus:bg-neutral-200 focus:text-gray-500 focus:shadow-grenteel-200 disabled:opacity-70 transition">
+                    <button onclick="share()" class="flex float-right active:scale-90 items-center px-3 py-2 border border-grenteel-200/30 dark:border-none text-xs leading-4 font-medium rounded-md text-slate-800 dark:text-slate-300 dark:font-semibold bg-neutral-400 dark:bg-midnight-100 dark:active:bg-midnight-100 dark:active:border-midnight-100 hover:shadow-neutral-300 hover:text-gray-700 focus:outline-none focus:bg-neutral-200 focus:text-gray-500 focus:shadow-grenteel-200 disabled:opacity-70 transition">
                         <svg class="inline-block stroke-slate-600 dark:stroke-slate-400 hover:stroke-slate-700 dark:hover:stroke-slate-300 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22"><g fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" transform="translate(1 1)"><circle cx="15" cy="3" r="3"/><circle cx="3" cy="10" r="3"/><circle cx="15" cy="17" r="3"/><path d="M5.59 11.51l6.83 3.98M12.41 4.51L5.59 8.49"/></g></svg>
                     </button>
                     <button wire:click="replyPost({{ $post }})" class="flex mr-2 float-right active:scale-90 items-center px-2 py-1 border border-grenteel-200/30 dark:border-none text-xs leading-4 font-medium rounded-md text-slate-800 dark:text-slate-300 dark:font-semibold bg-neutral-400 dark:bg-midnight-100 dark:active:bg-midnight-100 dark:active:border-midnight-100 hover:shadow-neutral-300 hover:text-gray-700 focus:outline-none focus:bg-neutral-200 focus:text-gray-500 focus:shadow-grenteel-200 disabled:opacity-70 transition">
@@ -905,6 +905,14 @@ function printMarkdownComment() {
             });
         });
     }
+}
+
+function share() {
+    navigator.share({
+        title: "{{ config('app.name') }}",
+        text: post.title + ' - ' + post.user.name + '(@'+post.user.username+') | {{ config("app.name") }}',
+        url: window.location.href,
+    });
 }
 
 

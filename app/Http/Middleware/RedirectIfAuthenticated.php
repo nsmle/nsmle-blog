@@ -23,6 +23,10 @@ class RedirectIfAuthenticated
         
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                if (preg_match("/\/post\//i", $request->getRequestUri())) {
+                    return redirect(preg_replace("/\/post\//i", '/posts/', $request->getRequestUri()));
+                }
+                
                 return redirect(RouteServiceProvider::HOME);
             }
         }
