@@ -5559,7 +5559,6 @@ window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   disableStats: true,
   encrypted: true,
   authEndpoint: "/broadcasting/auth",
-  enabledTransports: ['ws', 'wss'],
   authorizer: function authorizer(channel, options) {
     return {
       authorize: function authorize(socketId, callback) {

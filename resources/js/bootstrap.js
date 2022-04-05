@@ -63,7 +63,7 @@ window.Echo = new Echo({
     disableStats: true,
     encrypted: true,
     authEndpoint: "/broadcasting/auth",
-    enabledTransports: ['ws', 'wss'],
+    
     authorizer: (channel, options) => {
         return {
             authorize: (socketId, callback) => {
