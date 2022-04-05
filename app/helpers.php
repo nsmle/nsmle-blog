@@ -3,7 +3,7 @@
 use Carbon\Carbon;
 
 if (!function_exists('print_bio')) {
-    function print_bio($bio): string
+    function print_bio($bio)
     {
         if (empty($bio)) {
             return '';
