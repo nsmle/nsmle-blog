@@ -8,7 +8,7 @@
 <meta name="og:description" content="A group of U.S. Marines, under command of..."/>
 @endsection
     
-   <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 scroll-smooth">
+   <div class="max-w-3xl mx-auto sm:px-6 lg:px-8 scroll-smooth">
         <div class="flex mb-4 w-full px-6 md:px-4">
             @if (request()->mode)
                 @if (Auth::check() && Auth::id() == $user->id)
@@ -30,7 +30,7 @@
                                     @if ($user->last_seen > \Carbon\Carbon::yesterday())
                                         <div>
                                             @if ($user->last_seen > now()->addMinutes(-1))
-                                                <div class="absolute top-0 right-3 md:top-0 md:right-20 h-4 w-4 md:h-7 md:w-7 my-1 border-2 border-neutral-200 dark:border-midnight-500/50 rounded-full bg-green-400 z-2"></div>
+                                                <div class="absolute top-0 right-4 md:top-0 md:right-10 h-4 w-4 md:h-7 md:w-7 my-1 border-2 md:border-4 border-neutral-200 dark:border-midnight-500 rounded-full bg-green-400 z-2"></div>
                                             @endif
                                         </div>
                                     @endif

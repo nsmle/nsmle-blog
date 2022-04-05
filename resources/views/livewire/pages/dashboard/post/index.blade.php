@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+<div class="max-w-3xl mx-auto px-4 md:px-6 lg:px-8">
     
     <div class="flex justify-center mt-4">
         <h1 class="text-2xl text-bold text-center text-slate-800 dark:text-slate-100">Semua Post</h1>

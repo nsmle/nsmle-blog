@@ -25,6 +25,11 @@ Broadcast::channel('notify-event.{userId}', function($user, $userId) {
     return $user->id == $userId;
 });
 
+Broadcast::channel('chat-event.{roomId}', function($user, $roomId) {
+    if ($user->canJoinRoom($roomId)) {
+        return ['roomId' => $roomId];
+    }
+});
 
 Broadcast::channel('post-event', function () {
     return true;

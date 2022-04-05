@@ -1,4 +1,4 @@
-<div>
+<div class="max-w-3xl mx-auto px-4 md:px-6 lg:px-8">
     
     @if (!empty($this->replyToPost))
         <div class="flex w-full justify-center mb-4" x-data="" x-ref="replyPost">

@@ -67,7 +67,19 @@ class Show extends Component
     
     public function sendMessage()
     {
-        dd("send message");
+        if (!Auth::check()) {
+            $this->updateDataUser();
+            return $this->emit(
+                "openModal",
+                "components.modals.modals-login",
+                [
+                    'redirectAfterLogin' => "/{$this->user->username}",
+                    "message" => "Anda harus login untuk mengikuti {$this->user->name}.",
+                ]
+            );
+        }
+        
+        return redirect()->to('/chat/'.$this->user->username);
     }
     
     

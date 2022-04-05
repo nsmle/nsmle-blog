@@ -1,5 +1,5 @@
 <div>
-    <div class="max-w-7xl mx-auto md:px-6 lg:px-8"
+    <div class="max-w-3xl mx-auto md:px-6 lg:px-8"
         x-data
     >
         <div class="mx-auto md:flex md:grid md:grid-cols-2 md:gap-8 justify-center">
@@ -45,6 +45,10 @@
                                     Berhenti mengikuti
                                 </li>
                                 @endif
+                                <li wire:click="sendMessage('{{ $post->user->username }}')" class="flex w-full hover:text-blue-600 text-sm px-4 py-2 border-b border-gray-200 dark:border-slate-600 items-center">
+                                    <svg class="h-4 w-4 mr-2 stroke-slate-700 dark:stroke-slate-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" transform="translate(2 3.5)"><path d="M15.2677346,5.56112535 L11.0022884,8.99539646 C10.1950744,9.62826732 9.06350694,9.62826732 8.25629295,8.99539646 L3.95423343,5.56112535"/><path d="M4.88787188,4.13786652e-14 L14.3157895,4.13786652e-14 C15.6751779,0.015246851 16.9690267,0.589927916 17.8960035,1.59020219 C18.8229802,2.59047647 19.3021688,3.92902958 19.2219681,5.29411767 L19.2219681,11.8219949 C19.3021688,13.187083 18.8229802,14.5256361 17.8960035,15.5259104 C16.9690267,16.5261847 15.6751779,17.1008658 14.3157895,17.1161126 L4.88787188,17.1161126 C1.9679634,17.1161126 -2.4308041e-14,14.740665 -2.4308041e-14,11.8219949 L-2.4308041e-14,5.29411767 C-2.4308041e-14,2.37544758 1.9679634,4.13786652e-14 4.88787188,4.13786652e-14 Z"/></g></svg>
+                                    Kirim Pesan
+                                </li>
                                 <li wire:click="replyPost({{ $post }})" class="flex w-full hover:text-blue-600 text-sm px-4 py-2 border-b border-gray-200 dark:border-slate-600 items-center">
                                     <svg class="h-4 w-4 mr-2 fill-slate-700 dark:fill-slate-200" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" clip-rule="evenodd" viewBox="0 0 500 500"><path d="M79.451,277.28L39.451,277.28L99.451,157.28L159.451,277.28L119.451,277.28L119.451,314.148C119.451,344.524 144.075,369.148 174.451,369.148L400.549,369.148C411.588,369.148 420.549,378.11 420.549,389.148C420.549,400.187 411.588,409.148 400.549,409.148L174.451,409.148C121.983,409.148 79.451,366.615 79.451,314.148L79.451,277.28ZM380.549,222.72L380.549,185.852C380.549,155.476 355.925,130.852 325.549,130.852L99.451,130.852C88.412,130.852 79.451,121.89 79.451,110.852C79.451,99.813 88.412,90.852 99.451,90.852L325.549,90.852C378.017,90.852 420.549,133.385 420.549,185.852L420.549,222.72L460.549,222.72L400.549,342.72L340.549,222.72L380.549,222.72Z"/></svg>
                                     Balas post

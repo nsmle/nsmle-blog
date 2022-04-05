@@ -60,6 +60,11 @@ class Index extends Component
         $this->updatedDataPost();
     }
     
+    public function sendMessage($usernameUser)
+    {
+        return redirect()->to("/chat/{$usernameUser}");
+    }
+    
     public function replyPost($post)
     {
         $replyPost =  collect([

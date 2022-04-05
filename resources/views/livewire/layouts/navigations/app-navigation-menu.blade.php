@@ -35,10 +35,7 @@
         				@endif
         				{{ __('Home') }}
                     </x-jet-nav-link>
-                    <x-jet-nav-link href="{{ route('dashboard.post.index') }}" :active="request()->routeIs('dashboard.post*')">
-                        <svg class="inline-block stroke-midnight-700 dark:stroke-slate-300/80 dark:hover:stroke-salte-300 dark:hover:stroke-slate-200 h-4 w-4 mr-1 ml-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" transform="translate(2 3.5)"><path d="M15.2677346,5.56112535 L11.0022884,8.99539646 C10.1950744,9.62826732 9.06350694,9.62826732 8.25629295,8.99539646 L3.95423343,5.56112535"/><path d="M4.88787188,4.13786652e-14 L14.3157895,4.13786652e-14 C15.6751779,0.015246851 16.9690267,0.589927916 17.8960035,1.59020219 C18.8229802,2.59047647 19.3021688,3.92902958 19.2219681,5.29411767 L19.2219681,11.8219949 C19.3021688,13.187083 18.8229802,14.5256361 17.8960035,15.5259104 C16.9690267,16.5261847 15.6751779,17.1008658 14.3157895,17.1161126 L4.88787188,17.1161126 C1.9679634,17.1161126 -2.4308041e-14,14.740665 -2.4308041e-14,11.8219949 L-2.4308041e-14,5.29411767 C-2.4308041e-14,2.37544758 1.9679634,4.13786652e-14 4.88787188,4.13786652e-14 Z"/></g></svg>
-                        {{ __('Chat') }}
-                    </x-jet-nav-link>
+                    @livewire('layouts.navigations.chat')
                     <x-jet-nav-link href="{{ route('dashboard.post.index') }}" :active="request()->routeIs('dashboard.post*')">
                         @if (request()->routeIs('dashboard.post.*'))
         			        <svg class="inline-block fill-midnight-800 dark:fill-slate-200 dark:hover:fill-salte-300 dark:hover:fill-slate-200 h-4 w-4 mr-1 ml-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M13.191,0 C16.28,0 18,1.78 18,4.83 L18,4.83 L18,15.16 C18,18.26 16.28,20 13.191,20 L13.191,20 L4.81,20 C1.77,20 0,18.26 0,15.16 L0,15.16 L0,4.83 C0,1.78 1.77,0 4.81,0 L4.81,0 Z M5.08,13.74 C4.78,13.71 4.49,13.85 4.33,14.11 C4.17,14.36 4.17,14.69 4.33,14.95 C4.49,15.2 4.78,15.35 5.08,15.31 L5.08,15.31 L12.92,15.31 C13.319,15.27 13.62,14.929 13.62,14.53 C13.62,14.12 13.319,13.78 12.92,13.74 L12.92,13.74 Z M12.92,9.179 L5.08,9.179 C4.649,9.179 4.3,9.53 4.3,9.96 C4.3,10.39 4.649,10.74 5.08,10.74 L5.08,10.74 L12.92,10.74 C13.35,10.74 13.7,10.39 13.7,9.96 C13.7,9.53 13.35,9.179 12.92,9.179 L12.92,9.179 Z M8.069,4.65 L5.08,4.65 L5.08,4.66 C4.649,4.66 4.3,5.01 4.3,5.44 C4.3,5.87 4.649,6.22 5.08,6.22 L5.08,6.22 L8.069,6.22 C8.5,6.22 8.85,5.87 8.85,5.429 C8.85,5 8.5,4.65 8.069,4.65 L8.069,4.65 Z" transform="translate(3 2)"/></svg>
@@ -136,6 +133,7 @@
                         <x-slot name="content">
                                     
                             <!-- Dashboard Management -->
+                            {{--
                             <div class="block px-4 py-2 text-xs text-gray-400 dark:text-gray-400">
                                 {{ __('Beralih ke Halaman Depan') }}
                             </div>
@@ -164,11 +162,13 @@
                                 </div>
                             </div>
                             
-                            {{-- <x-jet-dropdown-link href="{{ route('home') }}">
+                            <x-jet-dropdown-link href="{{ route('home') }}">
                                 {{ __('Home') }}
-                            </x-jet-dropdown-link> --}}
+                            </x-jet-dropdown-link>
                             
                             <div class="block border-t border-slate-300 dark:border-slate-700"></div>
+                            --}}
+                            
                             
                             <!-- Account Management -->
                             <div class="block px-4 py-2 text-xs text-gray-400 dark:text-gray-400">

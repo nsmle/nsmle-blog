@@ -48,6 +48,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/posts/{post}', Post\Show::class)->middleware(['read-post'])->name('dashboard.post.view');
     Route::get('/posts/{post}/edit', Dashboard\Post\Edit::class)->name('dashboard.post.edit');
     
+    Route::get('/chat', Dashboard\Chat\Index::class)->name('dashboard.chat.index');
+    Route::get('/chat/{user}', Dashboard\Chat\Show::class)->name('dashboard.chat.show');
+    
     Route::get('/notifications', Dashboard\Notification\Index::class)->name('dashboard.notification.index');
     
     // Profile

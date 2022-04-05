@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\User;
 use Auth;
 use Cache;
-use Carbon\Carbon;
 
 
 class LastSeenUserActivity

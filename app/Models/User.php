@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Auth;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -108,6 +109,32 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Post::class)->latest()
                     ->where('published', $published)
                     ->paginate($pagination);
+    }
+    
+    public function canJoinRoom($roomId)
+    {
+        $room = ChatRoom::find($roomId);
+        
+        return ($room->user_id_1 == Auth::id() || $room->user_id_2 == Auth::id()) ? true : false;
+    }
+    
+    public function getRoom()
+    {
+        
+        $room = ChatRoom::where('user_id_1', $this->id)->where('user_id_2', Auth::id())->first();
+        
+        if (empty($room)) {
+            $room = ChatRoom::where('user_id_1', Auth::id())->where('user_id_2', $this->id)->first();
+        }
+        return $room;
+    }
+    
+    public function chatRooms()
+    {
+        return ChatRoom::where('user_id_1', $this->id)
+                       ->orWhere('user_id_2', $this->id)
+                       ->orderBy('updated_at', 'DESC')
+                       ->get();
     }
     
     protected function defaultProfilePhotoUrl()

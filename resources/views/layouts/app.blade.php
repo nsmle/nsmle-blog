@@ -33,9 +33,9 @@
     <body class="font-sans antialiased bg-neutral-100 dark:bg-midnight-600">
     
         <x-jet-banner />
-
+    
         <div class="min-h-screen">
-            @if (empty(request()->routeIs('register')) && empty(request()->routeIs('login')) && empty(request()->routeIs('password.*')))
+            @if (empty(request()->routeIs('register')) && empty(request()->routeIs('login')) && empty(request()->routeIs('password.*')) && !request()->routeIs('dashboard.chat.show') )
                 <!-- Top Navigation -->
                 @livewire('layouts.navigations.app-navigation-menu')
                 <!-- Bottom Navigation Mobile -->
@@ -51,7 +51,7 @@
             @endif
 
             <!-- Page Content -->
-            <main class="@if (!isset($header) && !request()->routeIs('register') && !request()->routeIs('login') && !request()->routeIs('password.*') && !request()->routeIs('verification.*')) pt-16 @endif">
+            <main class="@if (!isset($header) && !request()->routeIs('register') && !request()->routeIs('login') && !request()->routeIs('password.*') && !request()->routeIs('verification.*') && !request()->routeIs('dashboard.chat.show') ) pt-16 @endif">
                 {{ $slot }}
             </main>
         </div>
@@ -59,7 +59,7 @@
         @stack('modals')
         
         <!-- Footer -->
-        @if (empty(request()->routeIs('register')) && empty(request()->routeIs('login')) && empty(request()->routeIs('password.*')))
+        @if (empty(request()->routeIs('register')) && empty(request()->routeIs('login')) && empty(request()->routeIs('password.*')) && !request()->routeIs('dashboard.chat.show'))
         <div class="{{ (empty(request()->routeIs('register')) || empty(request()->routeIs('login'))) ? '' : 'hidden' }}">
             <livewire:layouts.footer />
         </div>

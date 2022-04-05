@@ -1,7 +1,7 @@
 
     @section('title', ($state['username']) ? "{$state['name']} (@{$state['username']}) • Edit Profile" : "Pengguna (@{request()->username}) Tidak Ditemukan")
     
-   <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 scroll-smooth">
+   <div class="max-w-3xl mx-auto sm:px-6 lg:px-8 scroll-smooth">
        
        <div class="bg-neutral-200 dark:bg-midnight-500/60 dark:text-neutral-100/80 border border-slate-300 dark:border-midnight-500 rounded-t-3xl md:rounded-3xl py-8 px-6 md:my-8">
            

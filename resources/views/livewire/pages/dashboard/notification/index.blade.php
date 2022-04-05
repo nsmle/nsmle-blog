@@ -1,6 +1,6 @@
 <div>
     
-    <div class="flex w-full max-w-2xl mx-auto px-4 md:px-6 lg:px-8 justify-center md:justify-none mb-8">
+    <div class="flex w-full max-w-3xl mx-auto px-4 md:px-6 lg:px-8 justify-center md:justify-none mb-8">
         <div class="w-full mt-4 px-2 py-4 @if (count($notifications)) bg-white @else bg-slate-50 @endif rounded-lg border shadow-md sm:p-8 dark:bg-midnight-500 dark:border-none">
             <div class="flex justify-between items-center mb-4">
                 <h5 class="text-xl px-2 font-bold leading-none text-gray-900 dark:text-white">@if (count($notifications)) Semua @endif Notifikasi</h5>
