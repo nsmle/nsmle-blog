@@ -11,7 +11,7 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Auth;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
@@ -139,8 +139,8 @@ class User extends Authenticatable implements MustVerifyEmail
     
     protected function defaultProfilePhotoUrl()
     {
-        //return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF&format=svg';
-        return 'https://randomuser.me/api/portraits/women/'.strlen($this->username.$this->name).'.jpg';
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF&format=svg';
+        //return 'https://randomuser.me/api/portraits/women/'.strlen($this->username.$this->name).'.jpg';
         
     }
     
