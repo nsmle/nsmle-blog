@@ -57,13 +57,13 @@ window.Echo = new Echo({
 window.Echo = new Echo({
     broadcaster: 'pusher',
     key: process.env.MIX_PUSHER_APP_KEY,
-    wsHost: window.location.hostname,
+    wsHost: process.env.MIX_PUSHER_WS_HOST,
     wsPort: 6001,
     forceTLS: false,
     disableStats: true,
     encrypted: true,
     authEndpoint: "/broadcasting/auth",
-    
+    enabledTransports: ['ws', 'wss'],
     authorizer: (channel, options) => {
         return {
             authorize: (socketId, callback) => {
