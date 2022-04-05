@@ -36,7 +36,7 @@ Route::middleware(['guest'])->group(function () {
 
 
 
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     // Page Dashboard
     Route::get('/home', Dashboard\Home\Index::class)->name('dashboard.home.index');
     
