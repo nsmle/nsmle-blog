@@ -5556,7 +5556,7 @@ window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   wsHost: window.location.hostname,
   wsPort: 6001,
   forceTLS: false,
-  disableStats: true,
+  disableStats: false,
   encrypted: true,
   authEndpoint: "/broadcasting/auth",
   authorizer: function authorizer(channel, options) {
