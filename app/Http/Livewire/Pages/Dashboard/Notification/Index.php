@@ -20,8 +20,10 @@ class Index extends Component
     public function getListeners()
     {
         return [
+            "echo-private:notify-event.".Auth::id().",.post-reply" => 'getUpdateNotifications',
             "echo-private:notify-event.".Auth::id().",.post-like" => 'getUpdateNotifications',
             "echo-private:notify-event.".Auth::id().",.post-comment" => 'getUpdateNotifications',
+            "echo-private:notify-event.".Auth::id().",.user-follow" => 'getUpdateNotifications',
         ];
     }
     
@@ -34,6 +36,7 @@ class Index extends Component
     public function readNotif($notifId, $redirect)
     {
         $notif = Notifications::find($notifId);
+        
         if (!empty($notif)) {
             $notif->update([
                 'read' => true,
@@ -56,8 +59,7 @@ class Index extends Component
     
     public function getUpdateNotifications()
     {
-        $this->notifications = Notifications::where('user_id', Auth::id())
-                                            ->orderBy('created_at', 'DESC')
+        $this->notifications = Notifications::where('user_id', Auth::id())->latest()
                                             ->with(['user', 'post', 'comment'])
                                             ->paginate($this->perPage, ['*'], null, 1);
         

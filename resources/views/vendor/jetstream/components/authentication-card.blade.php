@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-blue-500 flex flex-col sm:justify-center items-center py-4 bg-transparent">
+<div class="min-h-screen flex flex-col sm:justify-center items-center py-4 bg-transparent">
     
     @if (isset($logo))
     <div>

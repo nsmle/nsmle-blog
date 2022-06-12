@@ -63,24 +63,51 @@ class User extends Authenticatable implements MustVerifyEmail
         'profile_photo_url',
     ];
     
+    public function getRouteKeyName()
+    {
+        return "username";
+    }
+    
     public function scopeWithWhereHas($query, $relation, $constraint){
         return $query->whereHas($relation, $constraint)
         ->with([$relation => $constraint]);
     }
     
-    public function followers()
+    public function followers($paginate = null)
     {
+        if (!is_null($paginate)) {
+            return $this->belongsToMany(Self::class, 'followers', 'user_id', 'follower_id')->paginate($paginate);
+        }
+        
         return $this->belongsToMany(Self::class, 'followers', 'user_id', 'follower_id');
     }
 
-    public function followings()
+    public function followings($paginate = null)
     {
+        if (!is_null($paginate)) {
+            return $this->belongsToMany(Self::class, 'followers', 'follower_id', 'user_id')->paginate($paginate);
+        }
+        
         return $this->belongsToMany(Self::class, 'followers', 'follower_id', 'user_id');
     }
     
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+    
+    public function postsNew(bool $published = false, $pagination = null)
+    {
+        
+        if (!is_null($published) && is_null($pagination)) {
+            return $this->hasMany(Post::class)->latest()
+                        ->where('published', $published)
+                        ->get();
+        }
+        
+        return $this->hasMany(Post::class)->latest()
+                    ->where('published', $published)
+                    ->paginate($pagination);
     }
     
     protected function defaultProfilePhotoUrl()
@@ -115,6 +142,52 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         
         return 'Ikuti';
+    }
+    
+    public function createOrDeleteFollower(User $user)
+    {
+        $follower = Follower::where('user_id', $this->id)
+                         ->where('follower_id', $user->id)
+                         ->first();
+        
+        if (empty($follower)) {
+            $status = 'follow';
+            // Create Follower
+            $follow = Follower::create(['user_id' => $this->id, 'follower_id' => $user->id]);
+            // Create Notifications
+            $this->createOrDeleteNotificationUserFollow($status, $user, $follow);
+        } else {
+            $status = "unfollow";
+            // Delete Notifications
+            $this->createOrDeleteNotificationUserFollow($status, $user, $follower);
+            // Delete Follower
+            $follower->delete();
+        }
+        
+        return $status;
+    }
+    
+    public function createOrDeleteNotificationUserFollow(string $eventType, User $triggerUser, Follower $follow): void
+    {
+        if ($eventType == 'follow') {
+            Notifications::updateOrCreate([
+                'user_id'           =>  $this->id,
+                'trigger_user_id'   =>  $triggerUser->id,
+                'entity_id'         =>  $this->id,
+                'entity_type'       =>  'user',
+                'entity_event_id'   =>  $follow->id,
+                'entity_event_type' =>  $eventType
+            ]);
+        } else {
+            $notifyUserFollow = Notifications::where('trigger_user_id', $triggerUser->id)
+                ->where('entity_id', $this->id)
+                ->where('entity_type', 'user')
+                ->where('entity_event_id', $follow->id)
+                ->where('entity_event_type', 'follow')
+                ->first();
+            
+            (!empty($notifyUserFollow)) ? $notifyUserFollow->delete() : '';
+        }
     }
     
     

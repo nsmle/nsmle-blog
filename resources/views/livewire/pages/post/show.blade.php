@@ -488,7 +488,7 @@
                                             <div class="content-comment text-slate-500 dark:text-slate-300">{{ $comment->content }}</div>
                                             @if (auth()->check())
                                                 <div class="inline-block w-full my-2">
-                                                    @if ($comment->user->id === auth()->id())
+                                                    @if ($comment->user->id === Auth::id())
                                                         <button class="float-left active:scale-95 items-center px-2 py-1 border border-grenteel-200/30 text-xs leading-4 font-medium rounded-md text-slate-800 dark:text-slate-100 dark:font-semibold bg-neutral-400/30 dark:bg-midnight-100 dark:border-slate-600 dark:active:bg-midnight-100 dark:active:border-midnight-100 hover:shadow-neutral-300 hover:text-gray-700 focus:outline-none focus:bg-neutral-200 focus:text-gray-500 focus:shadow-grenteel-200 disabled:opacity-70 transition" @click="deleteComment({{ $comment->id }})">
                                                             <i class="fa-solid fa-trash opacity-50"></i>
                                                         </button>
@@ -513,22 +513,36 @@
                                                 </span>
                                                 <div class="px-4 py-2 bg-white rounded-lg border border-slate-200 shadow-sm dark:bg-midnight-400 dark:border-slate-700">
                                                     <div class="justify-between items-center mb-3 sm:flex">
-                                                        @if (Auth::check() && Auth::id() !== $commentChild->user->id) 
-                                                            <div class="text-sm hidden md:block align-center font-normal text-gray-500 dark:text-gray-300"><a href="/{{ $commentChild->user->username }}" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ $commentChild->user->name }}</a> Membalas komentar <span @click="previewCommentReply({{ $commentChild->replyTo()->id }})" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ ($commentChild->user_id !== $commentChild->replyTo()->user_id) ? $commentChild->replyTo()->user->name : 'nya' }}</span></div>
+                                                        <!-- start information user comment reply to comment MODE:Desktop-->
+                                                        @if (Auth::check()) 
+                                                            @if (Auth::id() == $commentChild->user->id && Auth::id() == $commentChild->replyTo()->user_id)
+                                                                <div class="text-sm hidden md:block align-center font-normal text-gray-500 dark:text-gray-300"><a href="/{{ $commentChild->user->username }}" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ ($commentChild->user->id == Auth::id()) ? 'Anda' : $commentChild->user->name }}</a> Membalas komentar <span @click="previewCommentReply({{ $commentChild->replyTo()->id }})" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ (Auth::id() == $commentChild->replyTo()->user->id) ? 'anda sendiri' : $commentChild->replyTo()->user->name }}</span></div>
+                                                            @else
+                                                                <div class="text-sm hidden md:block align-center font-normal text-gray-500 dark:text-gray-300"><a href="/{{ $commentChild->user->username }}" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ ($commentChild->user->id == Auth::id()) ? 'Anda' : $commentChild->user->name }}</a> Membalas komentar <span @click="previewCommentReply({{ $commentChild->replyTo()->id }})" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ (Auth::id() == $commentChild->replyTo()->user->id) ? 'anda' : $commentChild->replyTo()->user->name }}</span></div>
+                                                            @endif
                                                         @else
-                                                            <div class="text-sm hidden md:block align-center font-normal text-gray-500 dark:text-gray-300"><a href="/{{ $commentChild->user->username }}" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ (Auth::check() && Auth::id() !== $commentChild->user->id) ? $commentChild->user->name : "Anda" }}</a> Membalas komentar <span @click="previewCommentReply({{ $commentChild->replyTo()->id }})" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ ($commentChild->user_id !== $commentChild->replyTo()->user_id) ? $commentChild->replyTo()->user->name : 'anda sendiri' }}</span></div>
+                                                            <div class="text-sm hidden md:block align-center font-normal text-gray-500 dark:text-gray-300"><a href="/{{ $commentChild->user->username }}" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ $commentChild->user->name }}</a> Membalas komentar <span @click="previewCommentReply({{ $commentChild->replyTo()->id }})" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ ($commentChild->user->id !== $commentChild->replyTo()->user->id) ? $commentChild->replyTo()->user->name : 'nya' }}</span></div>
                                                         @endif
+                                                        <!-- start information user comment reply to comment MODE:Desktop-->
+                                                        <!-- Start reply Comment Information like created comment time and comment edited -->
                                                         <div class="align-center">
                                                             <time class="mb-1 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">{{ ($commentChild->created_at->timestamp > now()->subDays(8)->timestamp) ? $commentChild->created_at->diffForHumans() : $commentChild->created_at->format("H:i, F d, Y")  }}</time>
                                                             @if ($commentChild->created_at != $commentChild->updated_at)
                                                                 <edited class="float-right md:float-left md:mr-2 md:pr-2 md:border-r md:border-gray-200 dark:md:border-gray-600 mt-1 justify-center text-xs font-normal text-gray-400 sm:order-last sm:mb-0">diedit</edited>
                                                             @endif
                                                         </div>
-                                                        @if (Auth::check() && Auth::id() !== $commentChild->user->id) 
-                                                            <div class="text-sm md:hidden font-normal text-gray-500 dark:text-gray-300"><a href="/{{ $commentChild->user->username }}" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ $commentChild->user->name }}</a> Membalas komentar <span @click="previewCommentReply({{ $commentChild->replyTo()->id }})" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ ($commentChild->user_id !== $commentChild->replyTo()->user_id) ? $commentChild->replyTo()->user->name : 'nya' }}</span></div>
+                                                        <!-- End reply Comment Information like created comment time and comment edited -->
+                                                        <!-- start information user comment reply to comment MODE:Mobile-->
+                                                        @if (Auth::check()) 
+                                                            @if (Auth::id() == $commentChild->user->id && Auth::id() == $commentChild->replyTo()->user_id)
+                                                                <div class="text-sm md:hidden font-normal text-gray-500 dark:text-gray-300"><a href="/{{ $commentChild->user->username }}" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ ($commentChild->user->id == Auth::id()) ? 'Anda' : $commentChild->user->name }}</a> Membalas komentar <span @click="previewCommentReply({{ $commentChild->replyTo()->id }})" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ (Auth::id() == $commentChild->replyTo()->user->id) ? 'anda sendiri' : $commentChild->replyTo()->user->name }}</span></div>
+                                                            @else
+                                                                <div class="text-sm md:hidden font-normal text-gray-500 dark:text-gray-300"><a href="/{{ $commentChild->user->username }}" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ ($commentChild->user->id == Auth::id()) ? 'Anda' : $commentChild->user->name }}</a> Membalas komentar <span @click="previewCommentReply({{ $commentChild->replyTo()->id }})" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ (Auth::id() == $commentChild->replyTo()->user->id) ? 'anda' : (($commentChild->user->id == $commentChild->replyTo()->user->id) ? 'nya' : $commentChild->replyTo()->user->name) }}</span></div>
+                                                            @endif
                                                         @else
-                                                            <div class="text-sm md:hidden font-normal text-gray-500 dark:text-gray-300"><a href="/{{ $commentChild->user->username }}" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ (Auth::check() && Auth::id() !== $commentChild->user->id) ? $commentChild->user->name : "Anda" }}</a> Membalas komentar <span @click="previewCommentReply({{ $commentChild->replyTo()->id }})" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ ($commentChild->user_id !== $commentChild->replyTo()->user_id) ? $commentChild->replyTo()->user->name : 'anda sendiri' }}</span></div>
+                                                            <div class="text-sm md:hidden font-normal text-gray-500 dark:text-gray-300"><a href="/{{ $commentChild->user->username }}" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ $commentChild->user->name }}</a> Membalas komentar <span @click="previewCommentReply({{ $commentChild->replyTo()->id }})" class="font-semibold text-gray-900 dark:text-white hover:underline">{{ ($commentChild->user->id !== $commentChild->replyTo()->user->id) ? $commentChild->replyTo()->user->name : 'nya' }}</span></div>
                                                         @endif
+                                                        <!-- start information user comment reply to comment MODE:Mobile-->
                                                     </div>
                                                     <!-- <div class="flex content-comment p-3 text-slate-500 bg-neutral-50 dark:bg-midnight-400 dark:text-slate-300 border-slate-300 rounded border dark:border-slate-700">{{ $commentChild->content }}</div> -->
                                                     <div class="content-comment text-slate-500 dark:text-slate-300">{{ $commentChild->content }}</div>
@@ -789,12 +803,17 @@ function addComment(parent, replyTo) {
         
         addCommentar.content = markdown;
     });
+    
+    wrapperComment.querySelector('.post-comment button').addEventListener('click', () => {
+       wrapperComment.removeAttribute("wire:ignore"); 
+    });
 }
 
 // Edit Commentar
 let editCommentar = null;
 function editComment(commentId) {
     let wrapperComment = document.querySelector('.add-comment');
+    wrapperComment.setAttribute("wire:ignore");
     wrapperComment.classList.add('border-t', 'border-slate-400', 'py-4', 'my-8', 'rounded');
     wrapperComment.querySelector('.post-comment').classList.add('hidden');
     wrapperComment.querySelector('.post-edited-comment').classList.remove('hidden');
@@ -832,6 +851,9 @@ function editComment(commentId) {
         console.log(editCommentar);
     });
     
+    wrapperComment.querySelector('.post-edited-comment button').addEventListener('click', () => {
+       wrapperComment.removeAttribute("wire:ignore"); 
+    });
 }
 
 function deleteComment(commentId) {
@@ -887,8 +909,9 @@ function printMarkdownComment() {
 
 
 window.addEventListener('toastStatus', event => {
-    let wrapperComment = document.querySelector('.add-comment');
-    wrapperComment.removeAttribute("wire:ignore");
+    //let wrapperComment = document.querySelector('.add-comment');
+    //let editorComment = wrapperComment.querySelector('.editor-comment');
+    //editorComment.removeAttribute("wire:ignore");
     printMarkdownComment(); 
 });
 

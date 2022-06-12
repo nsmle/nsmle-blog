@@ -5,24 +5,17 @@ namespace App\Http\Livewire\Pages\Profile;
 use Livewire\Component;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Post;
-use App\Models\Follower;
+use App\Events\UserEvent;
+use App\Events\NotifyEvent;
 use Auth;
-use Livewire\WithPagination;
-
-use App\Events\UserStatus;
 
 class Show extends Component
 {
-    use WithPagination;
-    
     public $user;
     
-    protected $posts;
+    private $posts;
     
     public $usernameUser;
-    
-    public $follow, $alert;
     
     public $showPostPublishedOnly = true;
     
@@ -31,20 +24,14 @@ class Show extends Component
     public function getListeners()
     {
         return [
-            'user.follow' => 'follow',
-            'echo:user-status,.status' => 'userStatus'
+            "echo-private:notify-event.".Auth::id().",.user-follow" => 'updateDataUser',
+            'echo:user-event,.user-follow' => 'updateDataUser'
         ];
-    }
-    
-    public function userStatus($data)
-    {
-        $this->updateDataUser();
-        //dd($data);
     }
     
     public function follow()
     {
-        if (!auth()->check()) {
+        if (!Auth::check()) {
             $this->updateDataUser();
             return $this->emit(
                 "openModal",
@@ -56,20 +43,25 @@ class Show extends Component
             );
         }
         
-        $followed = $this->user->followers()->where('follower_id', auth()->id())->first();
+        $followStatus = $this->user->createOrDeleteFollower(Auth::user());
         
-        if (empty($followed)) {
-            Follower::create(['user_id' => $this->user->id, 'follower_id' => auth()->user()->id]);
-            $followStatus = 'followed';
-        } else {
-            $follow = Follower::where('user_id', $this->user->id)
-                              ->where('follower_id', $followed->id)
-                              ->first();
-            $follow->delete();
-            $followStatus = "unfollow";
-        }
+        // Send Notification to target user
+        broadcast(new NotifyEvent(
+            $this->user->id,
+            "user-follow",
+            [
+                'status' => $followStatus,
+                'time' => now()
+            ],
+            [
+                'user' => $this->user,
+                'follower' => Auth::user()
+            ]
+        ))->toOthers();
         
-        UserStatus::dispatch(Auth::user()->username, 'follow', ['followingUser' => $this->user->username, 'status' => $followStatus], 'status');
+        // Send Notification to all guest/user for refreshed data
+        UserEvent::dispatch('user-follow', $this->user->username);
+        
         $this->updateDataUser();
     }
     
@@ -81,7 +73,7 @@ class Show extends Component
     
     public function loadMorePost()
     {
-        $this->perPage = $perPage;
+        $this->perPage += 10;
         $this->updateDataUser();
     }
     
@@ -92,38 +84,40 @@ class Show extends Component
         $this->updateDataUser();
     }
     
-    
     public function updateDataUser()
     {
-        $this->user =  User::where('username', $this->usernameUser)
-                           ->with([ 'followers', 'followings', 'posts'])
+        $this->user =  User::where('username', $this->tempUsername)
                            ->first();
         
-        if (!$this->user) {
-            abort(404);
-        }
-        
-        $this->posts = $this->user
-                            ->posts()
-                            ->where('published', $this->showPostPublishedOnly)
-                            ->orderBy("published_at", "DESC")
-                            ->paginate($this->perPage, ['*'], null, 1);
+        $this->posts = $this->user->postsNew(
+            $this->showPostPublishedOnly,
+            $this->perPage
+        );
     }
     
-    public function mount(Request $request)
+    public function mount(User $user)
     {
-        $this->usernameUser = $request->username;
-        $this->updateDataUser();
+        // define user from route model binding
+        $this->user = $user;
+        $this->tempUsername = $user->username;
+        
+        // get user posts
+        $this->posts = $this->user->postsNew(
+            $this->showPostPublishedOnly,
+            $this->perPage
+        );
     }
+    
     
     public function render()
     {
         return view('livewire.pages.profile.show', [
             'user' => $this->user,
-            'follow' => $this->follow,
             'posts' => $this->posts,
-            'alert' => $this->alert,
-        ])->layout((Auth::check()) ? 'layouts.app' : 'layouts.guest');
-        
+        ])->layout(
+            (Auth::check())
+                ? 'layouts.app'
+                : 'layouts.guest'
+        );
     }
 }
